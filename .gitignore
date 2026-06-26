@@ -1,0 +1,4 @@
+assets/uploads/*
+assets/images/*
+!assets/uploads/.gitkeep
+!assets/images/.gitkeep
