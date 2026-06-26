@@ -130,6 +130,7 @@ require_once '../includes/header.php';
     </form>
 </div>
 <script>
+
 document.querySelector('[name="service_id"]')?.addEventListener('change', function() {
     const opt = this.options[this.selectedIndex];
     if (opt.value) {
