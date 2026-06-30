@@ -28,7 +28,7 @@ $recent_notifs = isLoggedIn() ? getRecentNotifications($pdo, $_SESSION['user_id'
     <title>Avocado Nail - <?php echo $title ?? 'Dashboard'; ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="/nail/assets/css/style.css">
+    <link rel="stylesheet" href="/nail_salon/assets/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
     function toggleNotifDropdown(id) {
@@ -50,18 +50,18 @@ $recent_notifs = isLoggedIn() ? getRecentNotifications($pdo, $_SESSION['user_id'
     <div class="max-w-7xl mx-auto px-4">
         <div class="flex justify-between h-16">
             <div class="flex items-center">
-                <a href="/nail/admin/dashboard.php" class="flex items-center space-x-2">
+                <a href="/nail_salon/admin/dashboard.php" class="flex items-center space-x-2">
                     <i class="fas fa-leaf text-emerald-500 text-2xl"></i>
                     <span class="font-bold text-xl text-emerald-800">Avocado Nail</span>
                 </a>
                 <div class="ml-10 flex items-center space-x-4">
-                    <a href="/nail/admin/dashboard.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-emerald-600"><i class="fas fa-home mr-1"></i>Dashboard</a>
-                    <a href="/nail/admin/categories.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-emerald-600"><i class="fas fa-tags mr-1"></i>Categories</a>
-                    <a href="/nail/admin/services.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-emerald-600"><i class="fas fa-hand-sparkles mr-1"></i>Services</a>
-                    <a href="/nail/admin/staff.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-emerald-600"><i class="fas fa-users mr-1"></i>Staff</a>
-                    <a href="/nail/admin/appointments.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-emerald-600"><i class="fas fa-calendar-check mr-1"></i>Appointments</a>
-                    <a href="/nail/admin/customers.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-emerald-600"><i class="fas fa-user-friends mr-1"></i>Customers</a>
-                    <a href="/nail/admin/reports.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-emerald-600"><i class="fas fa-chart-bar mr-1"></i>Reports</a>
+                    <a href="/nail_salon/admin/dashboard.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-emerald-600"><i class="fas fa-home mr-1"></i>Dashboard</a>
+                    <a href="/nail_salon/admin/categories.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-emerald-600"><i class="fas fa-tags mr-1"></i>Categories</a>
+                    <a href="/nail_salon/admin/services.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-emerald-600"><i class="fas fa-hand-sparkles mr-1"></i>Services</a>
+                    <a href="/nail_salon/admin/staff.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-emerald-600"><i class="fas fa-users mr-1"></i>Staff</a>
+                    <a href="/nail_salon/admin/appointments.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-emerald-600"><i class="fas fa-calendar-check mr-1"></i>Appointments</a>
+                    <a href="/nail_salon/admin/customers.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-emerald-600"><i class="fas fa-user-friends mr-1"></i>Customers</a>
+                    <a href="/nail_salon/admin/reports.php" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-emerald-600"><i class="fas fa-chart-bar mr-1"></i>Reports</a>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
@@ -77,7 +77,7 @@ $recent_notifs = isLoggedIn() ? getRecentNotifications($pdo, $_SESSION['user_id'
                         <div class="px-4 py-2 border-b flex justify-between items-center">
                             <span class="text-sm font-semibold text-gray-700">Notifications</span>
                             <?php if ($unread_count > 0): ?>
-                                <a href="/nail/admin/notifications.php?mark_read=all" class="text-xs text-emerald-600 hover:text-emerald-700">Mark all read</a>
+                                <a href="/nail_salon/admin/notifications.php?mark_read=all" class="text-xs text-emerald-600 hover:text-emerald-700">Mark all read</a>
                             <?php endif; ?>
                         </div>
                         <div class="max-h-64 overflow-y-auto">
@@ -85,7 +85,7 @@ $recent_notifs = isLoggedIn() ? getRecentNotifications($pdo, $_SESSION['user_id'
                                 <p class="text-xs text-gray-400 text-center py-6">No notifications yet</p>
                             <?php else: ?>
                                 <?php foreach ($recent_notifs as $n): ?>
-                                    <a href="/nail/admin/notifications.php<?php echo $n['appointment_id'] ? '?appointment_id=' . $n['appointment_id'] : ''; ?>" class="block px-4 py-3 hover:bg-gray-50 border-b last:border-0 <?php echo $n['is_read'] ? '' : 'bg-emerald-50'; ?>">
+                                    <a href="/nail_salon/admin/notifications.php<?php echo $n['appointment_id'] ? '?appointment_id=' . $n['appointment_id'] : ''; ?>" class="block px-4 py-3 hover:bg-gray-50 border-b last:border-0 <?php echo $n['is_read'] ? '' : 'bg-emerald-50'; ?>">
                                         <p class="text-sm font-medium text-gray-800"><?php echo htmlspecialchars($n['title']); ?></p>
                                         <p class="text-xs text-gray-500 mt-0.5"><?php echo htmlspecialchars($n['message']); ?></p>
                                         <p class="text-xs text-gray-400 mt-1"><?php echo date('M d, h:i A', strtotime($n['created_at'])); ?></p>
@@ -93,19 +93,19 @@ $recent_notifs = isLoggedIn() ? getRecentNotifications($pdo, $_SESSION['user_id'
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </div>
-                        <a href="/nail/admin/notifications.php" class="block px-4 py-2 text-center text-sm text-emerald-600 hover:bg-emerald-50 border-t font-medium">View All</a>
+                        <a href="/nail_salon/admin/notifications.php" class="block px-4 py-2 text-center text-sm text-emerald-600 hover:bg-emerald-50 border-t font-medium">View All</a>
                     </div>
                 </div>
                 <div class="relative" id="adminUserMenu">
                     <button onclick="document.getElementById('adminDropdown').classList.toggle('hidden')" class="flex items-center text-gray-600 hover:text-emerald-600">
                         <?php if (!empty($_SESSION['image'])): ?>
-                            <img src="/nail/assets/images/<?php echo htmlspecialchars($_SESSION['image']); ?>" class="w-8 h-8 rounded-full object-cover border-2 border-emerald-200">
+                            <img src="/nail_salon/assets/images/<?php echo htmlspecialchars($_SESSION['image']); ?>" class="w-8 h-8 rounded-full object-cover border-2 border-emerald-200">
                         <?php else: ?>
                             <i class="fas fa-user-circle text-2xl text-emerald-500"></i>
                         <?php endif; ?>
                     </button>
                     <div id="adminDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border" onclick="event.stopPropagation()">
-                        <a href="/nail/auth/logout.php" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+                        <a href="/nail_salon/auth/logout.php" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
                     </div>
                 </div>
             </div>
@@ -125,18 +125,18 @@ document.addEventListener('click', function(e) {
 <?php else: ?>
 <nav class="navbar" id="navbar">
     <div class="container">
-        <a href="/nail/customer/dashboard.php" class="logo">
+        <a href="/nail_salon/customer/dashboard.php" class="logo">
             <i class="fas fa-leaf"></i> Avocado Nail
         </a>
         <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
             <i class="fas fa-bars"></i>
         </button>
         <ul class="nav-links" id="navLinks">
-            <li><a href="/nail/customer/dashboard.php">Home</a></li>
-            <li><a href="/nail/customer/services.php">Services</a></li>
-            <li><a href="/nail/customer/staff.php">Our Team</a></li>
-            <li><a href="/nail/customer/booking.php" class="btn-nav">Book Now</a></li>
-            <li><a href="/nail/customer/appointments.php">My Appointments</a></li>
+            <li><a href="/nail_salon/customer/dashboard.php">Home</a></li>
+            <li><a href="/nail_salon/customer/services.php">Services</a></li>
+            <li><a href="/nail_salon/customer/staff.php">Our Team</a></li>
+            <li><a href="/nail_salon/customer/booking.php" class="btn-nav">Book Now</a></li>
+            <li><a href="/nail_salon/customer/appointments.php">My Appointments</a></li>
             <li class="nav-notif-item">
                 <a href="javascript:void(0)" onclick="toggleNotifDropdown('customerNotifDropdown')" class="nav-notif-btn">
                     <i class="fas fa-bell"></i>
@@ -148,7 +148,7 @@ document.addEventListener('click', function(e) {
                     <div class="notif-dropdown-header">
                         <span>Notifications</span>
                         <?php if ($unread_count > 0): ?>
-                            <a href="/nail/customer/notifications.php?mark_read=all" class="text-xs text-emerald-600">Mark all read</a>
+                            <a href="/nail_salon/customer/notifications.php?mark_read=all" class="text-xs text-emerald-600">Mark all read</a>
                         <?php endif; ?>
                     </div>
                     <div class="notif-dropdown-body">
@@ -156,7 +156,7 @@ document.addEventListener('click', function(e) {
                             <p class="text-xs text-gray-400 text-center py-6">No notifications yet</p>
                         <?php else: ?>
                             <?php foreach ($recent_notifs as $n): ?>
-                                <a href="/nail/customer/notifications.php<?php echo $n['appointment_id'] ? '?appointment_id=' . $n['appointment_id'] : ''; ?>" class="notif-item <?php echo $n['is_read'] ? '' : 'notif-unread'; ?>">
+                                <a href="/nail_salon/customer/notifications.php<?php echo $n['appointment_id'] ? '?appointment_id=' . $n['appointment_id'] : ''; ?>" class="notif-item <?php echo $n['is_read'] ? '' : 'notif-unread'; ?>">
                                     <p class="notif-title"><?php echo htmlspecialchars($n['title']); ?></p>
                                     <p class="notif-msg"><?php echo htmlspecialchars($n['message']); ?></p>
                                     <p class="notif-time"><?php echo date('M d, h:i A', strtotime($n['created_at'])); ?></p>
@@ -164,13 +164,13 @@ document.addEventListener('click', function(e) {
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
-                    <a href="/nail/customer/notifications.php" class="notif-view-all">View All</a>
+                    <a href="/nail_salon/customer/notifications.php" class="notif-view-all">View All</a>
                 </div>
             </li>
             <li class="nav-user-item">
                 <a href="javascript:void(0)" onclick="toggleUserDropdown()" class="nav-user-btn">
                     <?php if (!empty($_SESSION['image'])): ?>
-                        <img src="/nail/assets/images/<?php echo htmlspecialchars($_SESSION['image']); ?>" class="w-7 h-7 rounded-full object-cover">
+                        <img src="/nail_salon/assets/images/<?php echo htmlspecialchars($_SESSION['image']); ?>" class="w-7 h-7 rounded-full object-cover">
                     <?php else: ?>
                         <i class="fas fa-user-circle"></i>
                     <?php endif; ?>
@@ -178,10 +178,10 @@ document.addEventListener('click', function(e) {
                     <i class="fas fa-chevron-down" style="font-size:0.7rem;margin-left:0.3rem;"></i>
                 </a>
                 <div class="user-dropdown" id="userDropdown">
-                    <a href="/nail/customer/profile.php"><i class="fas fa-user-edit"></i> Profile</a>
-                    <a href="/nail/auth/change-password.php"><i class="fas fa-key"></i> Change Password</a>
+                    <a href="/nail_salon/customer/profile.php"><i class="fas fa-user-edit"></i> Profile</a>
+                    <a href="/nail_salon/auth/change-password.php"><i class="fas fa-key"></i> Change Password</a>
                     <hr>
-                    <a href="/nail/auth/logout.php" style="color:#dc2626;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    <a href="/nail_salon/auth/logout.php" style="color:#dc2626;"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
             </li>
         </ul>

@@ -104,7 +104,7 @@ require_once '../includes/header.php';
                 <tr class="border-b hover:bg-gray-50" data-category="<?php echo htmlspecialchars($svc['category_name'], ENT_QUOTES); ?>">
                     <td class="px-6 py-4">
                         <?php if ($svc['image']): ?>
-                            <img src="/nail/assets/uploads/<?php echo $svc['image']; ?>" alt="" class="w-12 h-12 object-cover rounded">
+                            <img src="/nail_salon/assets/uploads/<?php echo $svc['image']; ?>" alt="" class="w-12 h-12 object-cover rounded">
                         <?php else: ?>
                             <div class="w-12 h-12 bg-gray-100 rounded flex items-center justify-center text-gray-400"><i class="fas fa-image"></i></div>
                         <?php endif; ?>

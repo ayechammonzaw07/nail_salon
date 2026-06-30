@@ -44,7 +44,7 @@ require_once '../includes/header.php';
         <div class="hero-image">
             <div class="model-frame" style="overflow:hidden;">
                 <span class="model-text">✦ Welcome</span>
-                <img src="/nail/assets/uploads/services/home.jpg" alt="Nail Salon" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">
+                <img src="/nail_salon/assets/uploads/services/home.jpg" alt="Nail Salon" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">
             </div>
             <div class="floating-card">
                 <i class="fas fa-star"></i>
@@ -166,7 +166,7 @@ require_once '../includes/header.php';
             <div class="staff-card">
                 <div class="staff-photo">
                     <?php if ($s['photo']): ?>
-                    <img src="/nail/assets/uploads/<?php echo htmlspecialchars($s['photo']); ?>" alt="<?php echo htmlspecialchars($s['name']); ?>">
+                    <img src="/nail_salon/assets/uploads/<?php echo htmlspecialchars($s['photo']); ?>" alt="<?php echo htmlspecialchars($s['name']); ?>">
                     <?php else: ?>
                     <i class="fas fa-user-circle"></i>
                     <?php endif; ?>
@@ -186,7 +186,7 @@ require_once '../includes/header.php';
         <div class="about-grid">
             <div class="about-image">
                 <div class="model-frame-2" style="overflow:hidden;">
-                    <img src="/nail/assets/uploads/services/decor.jpg" alt="Salon Interior" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">
+                    <img src="/nail_salon/assets/uploads/services/decor.jpg" alt="Salon Interior" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">
                 </div>
                 <div class="experience-badge">
                     <h3>5+</h3>

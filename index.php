@@ -12,7 +12,7 @@ $staff = $pdo->query("SELECT * FROM staff WHERE status='available' ORDER BY name
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avocado Nail & Model Studio — Elegance in Every Stroke</title>
     <meta name="description" content="Premium nail artistry with a fresh, modern aesthetic. Book your session today.">
-    <link rel="stylesheet" href="/nail/assets/css/style.css">
+    <link rel="stylesheet" href="/nail_salon/assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -21,7 +21,7 @@ $staff = $pdo->query("SELECT * FROM staff WHERE status='available' ORDER BY name
 
 <nav class="navbar" id="navbar">
     <div class="container">
-        <a href="/nail/index.php" class="logo">
+        <a href="/nail_salon/index.php" class="logo">
             <i class="fas fa-leaf"></i> Avocado Nail
         </a>
         <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
@@ -33,8 +33,8 @@ $staff = $pdo->query("SELECT * FROM staff WHERE status='available' ORDER BY name
             <li><a href="#staff">Our Team</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
-            <li><a href="/nail/auth/login.php">Sign In</a></li>
-            <li><a href="/nail/auth/register.php" class="btn-nav">Get Started</a></li>
+            <li><a href="/nail_salon/auth/login.php">Sign In</a></li>
+            <li><a href="/nail_salon/auth/register.php" class="btn-nav">Get Started</a></li>
         </ul>
     </div>
 </nav>
@@ -56,7 +56,7 @@ $staff = $pdo->query("SELECT * FROM staff WHERE status='available' ORDER BY name
         <div class="hero-image">
             <div class="model-frame" style="background:linear-gradient(145deg, var(--avocado-100), var(--avocado-50));overflow:hidden;">
                 <span class="model-text">✦ Model Collection</span>
-                <img src="/nail/assets/uploads/services/home.jpg" alt="Nail Salon" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">
+                <img src="/nail_salon/assets/uploads/services/home.jpg" alt="Nail Salon" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">
             </div>
             <div class="floating-card">
                 <i class="fas fa-star"></i>
@@ -88,7 +88,7 @@ $staff = $pdo->query("SELECT * FROM staff WHERE status='available' ORDER BY name
             <?php foreach ($services as $svc): ?>
             <a href="javascript:void(0)" onclick="handleBook()" class="bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition group" style="text-decoration:none;">
                 <?php if ($svc['image']): ?>
-                    <img src="/nail/assets/uploads/<?php echo $svc['image']; ?>" alt="" class="w-full h-48 object-cover group-hover:scale-105 transition duration-300">
+                    <img src="/nail_salon/assets/uploads/<?php echo $svc['image']; ?>" alt="" class="w-full h-48 object-cover group-hover:scale-105 transition duration-300">
                 <?php else: ?>
                     <div class="w-full h-48 bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center">
                         <i class="fas fa-leaf text-emerald-300 text-5xl"></i>
@@ -132,7 +132,7 @@ $staff = $pdo->query("SELECT * FROM staff WHERE status='available' ORDER BY name
             <div class="staff-card">
                 <div class="staff-photo">
                     <?php if ($s['photo']): ?>
-                    <img src="/nail/assets/uploads/<?php echo htmlspecialchars($s['photo']); ?>" alt="<?php echo htmlspecialchars($s['name']); ?>">
+                    <img src="/nail_salon/assets/uploads/<?php echo htmlspecialchars($s['photo']); ?>" alt="<?php echo htmlspecialchars($s['name']); ?>">
                     <?php else: ?>
                     <i class="fas fa-user-circle"></i>
                     <?php endif; ?>
@@ -153,7 +153,7 @@ $staff = $pdo->query("SELECT * FROM staff WHERE status='available' ORDER BY name
         <div class="about-grid">
             <div class="about-image">
                 <div class="model-frame-2" style="overflow:hidden;">
-                    <img src="/nail/assets/uploads/services/decor.jpg" alt="Salon Interior" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">
+                    <img src="/nail_salon/assets/uploads/services/decor.jpg" alt="Salon Interior" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">
                 </div>
                 <div class="experience-badge">
                     <h3>5+</h3>
@@ -274,7 +274,7 @@ $staff = $pdo->query("SELECT * FROM staff WHERE status='available' ORDER BY name
                 <h4>Quick Links</h4>
                 <ul>
                     <li><a href="#home">Home</a></li>
-            <li><a href="/nail/services.php">Services</a></li>
+            <li><a href="/nail_salon/services.php">Services</a></li>
                     <li><a href="#about">About</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
@@ -282,8 +282,8 @@ $staff = $pdo->query("SELECT * FROM staff WHERE status='available' ORDER BY name
             <div class="footer-col">
                 <h4>Account</h4>
                 <ul>
-                    <li><a href="/nail/auth/login.php">Sign In</a></li>
-                    <li><a href="/nail/auth/register.php">Create Account</a></li>
+                    <li><a href="/nail_salon/auth/login.php">Sign In</a></li>
+                    <li><a href="/nail_salon/auth/register.php">Create Account</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -312,7 +312,7 @@ const isLoggedIn = <?php echo isLoggedIn() ? 'true' : 'false'; ?>;
 
 function handleBook() {
     if (isLoggedIn) {
-        window.location.href = '/nail/customer/booking.php';
+        window.location.href = '/nail_salon/customer/booking.php';
     } else {
         Swal.fire({
             icon: 'info',
@@ -326,7 +326,7 @@ function handleBook() {
             showClass: { popup: 'animate__animated animate__fadeInUp' }
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = '/nail/auth/login.php';
+                window.location.href = '/nail_salon/auth/login.php';
             }
         });
     }
