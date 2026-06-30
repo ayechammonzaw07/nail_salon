@@ -41,6 +41,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $duration_minutes = $svc['duration'];
             $end_time = date('H:i:s', strtotime($start_time) + $duration_minutes * 60);
 
+            $staff_stmt = $pdo->prepare("SELECT working_hours_start, working_hours_end FROM staff WHERE id = ?");
+            $staff_stmt->execute([$staff_id]);
+            $staff_info = $staff_stmt->fetch();
+
+            if ($staff_info) {
+                if ($start_time < $staff_info['working_hours_start']) {
+                    $error = 'Staff working hours start at ' . date('h:i A', strtotime($staff_info['working_hours_start'])) . '. Please select a later time.';
+                } elseif ($end_time > $staff_info['working_hours_end']) {
+                    $error = 'This service ends at ' . date('h:i A', strtotime($end_time)) . ', which is beyond staff working hours (' . date('h:i A', strtotime($staff_info['working_hours_end'])) . '). Please select an earlier time or book for tomorrow.';
+                }
+            }
+
             $duplicate = $pdo->prepare("SELECT id FROM appointments WHERE customer_id = ? AND service_id = ? AND appointment_date = ? AND status NOT IN ('cancelled')");
             $duplicate->execute([$_SESSION['user_id'], $service_id, $appointment_date]);
             if ($duplicate->fetch()) {
@@ -67,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 require_once '../includes/header.php';
 ?>
+
 <div class="space-y-6">
     <h1 class="text-2xl font-bold text-emerald-900">Book an Appointment</h1>
     <p class="text-gray-500">Choose your service, staff, and preferred schedule.</p>
@@ -96,7 +109,7 @@ require_once '../includes/header.php';
                 <select name="staff_id" required class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm">
                     <option value="">Select staff</option>
                     <?php foreach ($staff_members as $staff): ?>
-                        <option value="<?php echo $staff['id']; ?>" <?php echo $selected_staff == $staff['id'] ? 'selected' : ''; ?>>
+                        <option value="<?php echo $staff['id']; ?>" data-start="<?php echo $staff['working_hours_start'] ?? '09:00:00'; ?>" data-end="<?php echo $staff['working_hours_end'] ?? '18:00:00'; ?>" <?php echo $selected_staff == $staff['id'] ? 'selected' : ''; ?>>
                             <?php echo htmlspecialchars($staff['name']); ?> — <?php echo htmlspecialchars($staff['specialization'] ?? 'General'); ?>
                         </option>
                     <?php endforeach; ?>
@@ -131,11 +144,64 @@ require_once '../includes/header.php';
 </div>
 <script>
 
+function formatTime(timeStr) {
+    const parts = timeStr.split(':');
+    const h = parseInt(parts[0]);
+    const m = parts[1];
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 || 12;
+    return h12 + ':' + m + ' ' + ampm;
+}
+
+document.querySelector('form')?.addEventListener('submit', function(e) {
+    const serviceSelect = document.querySelector('[name="service_id"]');
+    const staffSelect = document.querySelector('[name="staff_id"]');
+    const timeSelect = document.querySelector('[name="appointment_time"]');
+
+    if (!serviceSelect.value || !staffSelect.value || !timeSelect.value) return;
+
+    const duration = parseInt(serviceSelect.options[serviceSelect.selectedIndex].dataset.duration);
+    const staffStart = staffSelect.options[staffSelect.selectedIndex].dataset.start;
+    const staffEnd = staffSelect.options[staffSelect.selectedIndex].dataset.end;
+    const startTime = timeSelect.value;
+
+    const [sh, sm] = startTime.split(':').map(Number);
+    const totalMin = sh * 60 + sm + duration;
+    const endH = Math.floor(totalMin / 60);
+    const endM = totalMin % 60;
+    const endTime = String(endH).padStart(2, '0') + ':' + String(endM).padStart(2, '0') + ':00';
+
+    if (startTime < staffStart) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'warning',
+            title: 'Before Working Hours',
+            html: 'Staff working hours start at <strong>' + formatTime(staffStart) + '</strong>. Please select a later time.',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#059669'
+        });
+        return;
+    }
+
+    if (endTime > staffEnd) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'warning',
+            title: 'Exceeds Working Hours',
+            html: 'This service ends at <strong>' + formatTime(endTime) + '</strong>, which is beyond staff working hours (<strong>' + formatTime(staffEnd) + '</strong>).<br><br>Please select an earlier time or book for <strong>tomorrow</strong>.',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#059669'
+        });
+    }
+});
+
 document.querySelector('[name="service_id"]')?.addEventListener('change', function() {
     const opt = this.options[this.selectedIndex];
     if (opt.value) {
-        document.querySelector('.selected-summary').innerHTML =
-            '<i class="fas fa-hand-sparkles mr-2"></i>' + opt.text;
+        const summary = document.querySelector('.selected-summary');
+        if (summary) {
+            summary.innerHTML = '<i class="fas fa-hand-sparkles mr-2"></i>' + opt.text;
+        }
     }
 });
 

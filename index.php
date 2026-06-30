@@ -147,6 +147,7 @@ $staff = $pdo->query("SELECT * FROM staff WHERE status='available' ORDER BY name
 </section>
 <?php endif; ?>
 
+<!-- about -->
 <section class="section about-section" id="about">
     <div class="container">
         <div class="about-grid">

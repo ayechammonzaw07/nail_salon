@@ -54,6 +54,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 $services = $pdo->query("SELECT s.*, c.name as category_name FROM services s JOIN categories c ON s.category_id = c.id ORDER BY s.created_at DESC")->fetchAll();
 $categories = $pdo->query("SELECT * FROM categories WHERE status='active'")->fetchAll();
 
+$categoryCounts = [];
+foreach ($services as $svc) {
+    $catName = $svc['category_name'];
+    $categoryCounts[$catName] = ($categoryCounts[$catName] ?? 0) + 1;
+}
+
 require_once '../includes/header.php';
 ?>
 <div class="space-y-6">
@@ -67,6 +73,18 @@ require_once '../includes/header.php';
     <?php if ($message): ?>
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg"><?php echo $message; ?></div>
     <?php endif; ?>
+
+    <!-- Category Filter Tabs -->
+    <div class="flex flex-wrap gap-2 mb-4">
+        <button onclick="filterCategory('all')" class="filter-btn px-4 py-2 rounded-lg text-sm font-medium border transition-all bg-emerald-600 text-white border-emerald-600 shadow-sm" data-category="all">
+            All (<?php echo count($services); ?>)
+        </button>
+        <?php foreach ($categories as $cat): ?>
+            <button onclick="filterCategory('<?php echo htmlspecialchars($cat['name'], ENT_QUOTES); ?>')" class="filter-btn px-4 py-2 rounded-lg text-sm font-medium border transition-all bg-white text-gray-700 border-gray-300 hover:bg-emerald-50 hover:border-emerald-300" data-category="<?php echo htmlspecialchars($cat['name'], ENT_QUOTES); ?>">
+                <?php echo htmlspecialchars($cat['name']); ?> (<?php echo $categoryCounts[$cat['name']] ?? 0; ?>)
+            </button>
+        <?php endforeach; ?>
+    </div>
 
     <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
         <table class="w-full text-sm">
@@ -83,7 +101,7 @@ require_once '../includes/header.php';
             </thead>
             <tbody>
                 <?php foreach ($services as $svc): ?>
-                <tr class="border-b hover:bg-gray-50">
+                <tr class="border-b hover:bg-gray-50" data-category="<?php echo htmlspecialchars($svc['category_name'], ENT_QUOTES); ?>">
                     <td class="px-6 py-4">
                         <?php if ($svc['image']): ?>
                             <img src="/nail/assets/uploads/<?php echo $svc['image']; ?>" alt="" class="w-12 h-12 object-cover rounded">
@@ -234,6 +252,24 @@ function editService(svc) {
     document.getElementById('edit_duration').value = svc.duration;
     document.getElementById('edit_status').value = svc.status;
     openModal('editModal');
+}
+function filterCategory(category) {
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-600');
+        btn.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
+    });
+    const active = document.querySelector(`.filter-btn[data-category="${category}"]`);
+    if (active) {
+        active.classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
+        active.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
+    }
+    document.querySelectorAll('tbody tr').forEach(row => {
+        if (category === 'all' || row.dataset.category === category) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
 }
 </script>
 <?php require_once '../includes/footer.php'; ?>
