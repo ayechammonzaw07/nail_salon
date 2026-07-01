@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-$services = $pdo->query("SELECT s.*, c.name as category_name FROM services s JOIN categories c ON s.category_id = c.id ORDER BY s.created_at DESC")->fetchAll();
+$services = $pdo->query("SELECT s.*, c.name as category_name FROM services s JOIN categories c ON s.category_id = c.id ORDER BY s.status ASC, s.name ASC")->fetchAll();
 $categories = $pdo->query("SELECT * FROM categories WHERE status='active'")->fetchAll();
 
 $categoryCounts = [];
