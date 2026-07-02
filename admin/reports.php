@@ -150,7 +150,7 @@ require_once '../includes/header.php';
     <?php elseif ($report_type === 'appointments'): ?>
         <?php
         $stmt = $pdo->query("
-            SELECT status, COUNT(*) as count, COALESCE(SUM(s.price), 0) as total
+            SELECT a.status, COUNT(*) as count, COALESCE(SUM(s.price), 0) as total
             FROM appointments a
             LEFT JOIN services s ON a.service_id = s.id
             GROUP BY status

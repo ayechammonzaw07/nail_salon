@@ -42,9 +42,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     } elseif ($action === 'assign_staff') {
         $id = $_POST['id'];
         $staff_id = $_POST['staff_id'];
-        $stmt = $pdo->prepare("UPDATE appointments SET staff_id=? WHERE id=?");
-        $stmt->execute([$staff_id, $id]);
-        $message = 'Staff assigned.';
+        $check = $pdo->prepare("SELECT appointment_date FROM appointments WHERE id = ?");
+        $check->execute([$id]);
+        $apt_row = $check->fetch();
+
+        if ($apt_row && $apt_row['appointment_date'] < date('Y-m-d')) {
+            $swal_error = 'Cannot change staff for past appointments.';
+        } else {
+            $stmt = $pdo->prepare("UPDATE appointments SET staff_id=? WHERE id=?");
+            $stmt->execute([$staff_id, $id]);
+            $message = 'Staff assigned.';
+        }
     }
 }
 
