@@ -27,9 +27,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             move_uploaded_file($_FILES['photo']['tmp_name'], $upload_dir . $photo);
         }
 
+        $incentive_rate = trim($_POST['incentive_rate'] ?? '');
+        if ($incentive_rate !== '') {
+            $incentive_rate = floatval($incentive_rate);
+        } elseif (strtolower(trim($specialization)) === 'professional nail artist') {
+            $incentive_rate = 15.00;
+        } else {
+            $incentive_rate = null;
+        }
+
         if ($action === 'add') {
             $stmt = $pdo->prepare("INSERT INTO staff (name, phone, specialization, working_hours_start, working_hours_end, photo, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([$name, $phone, $specialization, $working_hours_start, $working_hours_end, $photo, $status]);
+            $staff_id = $pdo->lastInsertId();
+            if ($incentive_rate !== null) {
+                $pdo->prepare("INSERT INTO incentive_settings (staff_id, rate) VALUES (?, ?)")->execute([$staff_id, $incentive_rate]);
+            }
             $message = 'Staff added successfully.';
         } else {
             $id = $_POST['id'];
@@ -40,6 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $stmt = $pdo->prepare("UPDATE staff SET name=?, phone=?, specialization=?, working_hours_start=?, working_hours_end=?, status=? WHERE id=?");
                 $stmt->execute([$name, $phone, $specialization, $working_hours_start, $working_hours_end, $status, $id]);
             }
+            $pdo->prepare("INSERT INTO incentive_settings (staff_id, rate) VALUES (?, ?) ON DUPLICATE KEY UPDATE rate = VALUES(rate)")
+                ->execute([$id, $incentive_rate ?? 10.00]);
             $message = 'Staff updated successfully.';
         }
     } elseif ($action === 'delete') {
@@ -50,7 +65,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-$staff_members = $pdo->query("SELECT * FROM staff ORDER BY created_at DESC")->fetchAll();
+$staff_members = $pdo->query("
+    SELECT st.*, inc.rate AS incentive_rate
+    FROM staff st
+    LEFT JOIN incentive_settings inc ON st.id = inc.staff_id
+    ORDER BY st.created_at DESC
+")->fetchAll();
 
 require_once '../includes/header.php';
 ?>
@@ -95,6 +115,7 @@ require_once '../includes/header.php';
                 <div class="mt-4 space-y-1 text-sm text-gray-500">
                     <p><i class="fas fa-phone mr-2"></i><?php echo htmlspecialchars($staff['phone'] ?? 'N/A'); ?></p>
                     <p><i class="fas fa-clock mr-2"></i><?php echo date('h:i A', strtotime($staff['working_hours_start'])); ?> - <?php echo date('h:i A', strtotime($staff['working_hours_end'])); ?></p>
+                    <p><i class="fas fa-coins mr-2"></i>Incentive Rate: <span class="font-medium text-emerald-600"><?php echo $staff['incentive_rate'] ? number_format($staff['incentive_rate'], 1) . '%' : '10.0% (default)'; ?></span></p>
                 </div>
                 <div class="mt-4 flex space-x-2">
                     <button onclick='editStaff(<?php echo json_encode($staff); ?>)' class="flex-1 text-center text-blue-500 hover:text-blue-700 border border-blue-200 rounded-lg py-1.5 text-sm">
@@ -138,7 +159,7 @@ require_once '../includes/header.php';
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
-                    <input type="text" name="specialization" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
+                    <input type="text" name="specialization" oninput="autoIncentiveRate(this)" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -149,6 +170,11 @@ require_once '../includes/header.php';
                         <label class="block text-sm font-medium text-gray-700 mb-1">Working Hours End</label>
                         <input type="time" name="working_hours_end" value="18:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
                     </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Incentive Rate (%)</label>
+                    <input type="number" name="incentive_rate" step="0.1" min="0" max="100" placeholder="Auto (10% or 15% for Nail Artist)" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
+                    <p class="text-xs text-gray-400 mt-1">Leave empty for auto-rate based on specialization</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
@@ -189,7 +215,7 @@ require_once '../includes/header.php';
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
-                    <input type="text" name="specialization" id="edit_specialization" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
+                    <input type="text" name="specialization" id="edit_specialization" oninput="autoIncentiveRate(this)" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -200,6 +226,11 @@ require_once '../includes/header.php';
                         <label class="block text-sm font-medium text-gray-700 mb-1">Working Hours End</label>
                         <input type="time" name="working_hours_end" id="edit_end" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
                     </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Incentive Rate (%)</label>
+                    <input type="number" name="incentive_rate" id="edit_incentive_rate" step="0.1" min="0" max="100" placeholder="Auto (10% or 15% for Nail Artist)" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
+                    <p class="text-xs text-gray-400 mt-1">Leave empty for auto-rate based on specialization</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
@@ -226,7 +257,14 @@ function editStaff(staff) {
     document.getElementById('edit_start').value = staff.working_hours_start;
     document.getElementById('edit_end').value = staff.working_hours_end;
     document.getElementById('edit_status').value = staff.status;
+    document.getElementById('edit_incentive_rate').value = staff.incentive_rate || '';
     openModal('editModal');
+}
+function autoIncentiveRate(input) { 
+    if (input.value.toLowerCase() === 'professional nail artist') {
+        var rateField = input.closest('form').querySelector('[name="incentive_rate"]');
+        if (rateField && !rateField.value) rateField.value = '15';
+    }
 }
 </script>
 <?php require_once '../includes/footer.php'; ?>

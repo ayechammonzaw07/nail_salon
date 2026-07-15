@@ -86,8 +86,8 @@ require_once '../includes/header.php';
         <?php endforeach; ?>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
-        <table class="w-full text-sm">
+    <div class="bg-white rounded-xl shadow-sm border overflow-x-auto">
+        <table class="w-full text-sm min-w-[700px]">
             <thead>
                 <tr class="bg-gray-50 border-b">
                     <th class="px-6 py-3 text-left font-medium text-gray-500">Image</th>

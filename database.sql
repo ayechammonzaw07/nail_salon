@@ -92,6 +92,16 @@ CREATE TABLE notifications (
 
 CREATE INDEX idx_notifications_user ON notifications(user_id, is_read);
 
+-- Incentive settings table (per-staff commission rates)
+CREATE TABLE incentive_settings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    staff_id INT NOT NULL UNIQUE,
+    rate DECIMAL(5,2) NOT NULL DEFAULT 10.00 COMMENT 'Commission percentage (e.g. 10.00 = 10%)',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (staff_id) REFERENCES staff(id) ON DELETE CASCADE
+);
+
 -- Insert default admin account
 INSERT INTO users (username, email, password, full_name, role, status)
 VALUES ('admin', 'admin@nailsalon.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin User', 'admin', 'active');
@@ -112,3 +122,7 @@ INSERT INTO staff (name, phone, specialization, working_hours_start, working_hou
 ('Michael Brown', '09173456789', 'Pedicure Specialist', '09:00:00', '18:00:00', 'available'),
 ('Jessica Davis', '09174567890', 'Extensions Specialist', '09:00:00', '18:00:00', 'available'),
 ('David Garcia', '09175678901', 'Waxing Specialist', '09:00:00', '18:00:00', 'available');
+
+-- Insert default incentive rates for existing staff (10% for all)
+INSERT INTO incentive_settings (staff_id, rate)
+SELECT id, 10.00 FROM staff;

@@ -6,6 +6,14 @@ requireAdmin();
 $title = 'Appointments';
 $message = '';
 
+// Mark notifications as read when arriving from bell
+if (isset($_GET['mark_read'])) {
+    require_once '../includes/notifications.php';
+    markAllAsRead($pdo, $_SESSION['user_id']);
+    header('Location: appointments.php');
+    exit;
+}
+
 // Handle status update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
@@ -81,8 +89,8 @@ require_once '../includes/header.php';
                 <option value="">All Statuses</option>
                 <option value="pending" <?php echo $status_filter === 'pending' ? 'selected' : ''; ?>>Pending</option>
                 <option value="confirmed" <?php echo $status_filter === 'confirmed' ? 'selected' : ''; ?>>Confirmed</option>
-                <option value="in_progress" <?php echo $status_filter === 'in_progress' ? 'selected' : ''; ?>>In Progress</option>
                 <option value="completed" <?php echo $status_filter === 'completed' ? 'selected' : ''; ?>>Completed</option>
+                <option value="in_progress" <?php echo $status_filter === 'in_progress' ? 'selected' : ''; ?>>In Progress</option>
                 <option value="cancelled" <?php echo $status_filter === 'cancelled' ? 'selected' : ''; ?>>Cancelled</option>
             </select>
         </div>
@@ -129,8 +137,8 @@ require_once '../includes/header.php';
                             <?php echo match($apt['status']) {
                                 'pending' => 'bg-yellow-100 text-yellow-700',
                                 'confirmed' => 'bg-blue-100 text-blue-700',
-                                'in_progress' => 'bg-purple-100 text-purple-700',
                                 'completed' => 'bg-green-100 text-green-700',
+                                'in_progress' => 'bg-purple-100 text-purple-700',
                                 'cancelled' => 'bg-red-100 text-red-700',
                                 default => 'bg-gray-100 text-gray-700'
                             }; ?>">
@@ -144,10 +152,11 @@ require_once '../includes/header.php';
                                 <input type="hidden" name="id" value="<?php echo $apt['id']; ?>">
                                 <select name="status" class="text-xs border border-gray-300 rounded px-1 py-0.5" onchange="this.form.submit()">
                                     <option value="">Change</option>
-                                    <option value="confirmed">Confirm</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="completed">Completed</option>
                                     <option value="in_progress">In Progress</option>
-                                    <option value="completed">Complete</option>
-                                    <option value="cancelled">Cancel</option>
+                                    <option value="cancelled">Cancelled</option>
                                 </select>
                             </form>
                             <form method="POST" class="flex space-x-1">

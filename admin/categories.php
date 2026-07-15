@@ -49,8 +49,8 @@ require_once '../includes/header.php';
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg"><?php echo $message; ?></div>
     <?php endif; ?>
 
-    <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
-        <table class="w-full text-sm">
+    <div class="bg-white rounded-xl shadow-sm border overflow-x-auto">
+        <table class="w-full text-sm min-w-[600px]">
             <thead>
                 <tr class="bg-gray-50 border-b">
                     <th class="px-6 py-3 text-left font-medium text-gray-500">ID</th>

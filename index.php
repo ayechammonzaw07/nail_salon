@@ -186,7 +186,7 @@ $staff = $pdo->query("SELECT * FROM staff WHERE status='available' ORDER BY name
             <h2><span>Contact</span> Us</h2>
             <p>We'd love to hear from you. Reach out for bookings, inquiries, or just to say hello.</p>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;max-width:1000px;margin:0 auto;">
+        <div class="contact-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;max-width:1000px;margin:0 auto;">
             <div>
                 <div style="display:flex;flex-direction:column;gap:1.5rem;">
                     <div style="display:flex;align-items:flex-start;gap:1rem;">
@@ -237,7 +237,7 @@ $staff = $pdo->query("SELECT * FROM staff WHERE status='available' ORDER BY name
                 <h3 style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--avocado-900);margin:0 0 0.5rem;">Send a Message</h3>
                 <p style="color:var(--text-light);font-size:0.9rem;margin:0 0 1.5rem;">We'll get back to you within 24 hours.</p>
                 <form method="POST" action="" style="display:flex;flex-direction:column;gap:1rem;">
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
                         <input type="text" placeholder="Your Name" required style="width:100%;padding:0.9rem 1rem;border:2px solid transparent;border-radius:12px;font-size:0.9rem;background:white;outline:none;transition:all 0.3s;" onfocus="this.style.borderColor='var(--avocado-400)';" onblur="this.style.borderColor='transparent';">
                         <input type="email" placeholder="Your Email" required style="width:100%;padding:0.9rem 1rem;border:2px solid transparent;border-radius:12px;font-size:0.9rem;background:white;outline:none;transition:all 0.3s;" onfocus="this.style.borderColor='var(--avocado-400)';" onblur="this.style.borderColor='transparent';">
                     </div>
