@@ -75,9 +75,9 @@ $staff_members = $pdo->query("
 require_once '../includes/header.php';
 ?>
 <div class="space-y-6">
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h1 class="text-2xl font-bold text-gray-800">Staff Management</h1>
-        <button onclick="openModal('addModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg">
+        <button onclick="openModal('addModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm w-full sm:w-auto text-center">
             <i class="fas fa-plus mr-2"></i>Add Staff
         </button>
     </div>

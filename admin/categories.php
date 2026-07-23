@@ -38,9 +38,9 @@ $categories = $pdo->query("SELECT * FROM categories ORDER BY created_at DESC")->
 require_once '../includes/header.php';
 ?>
 <div class="space-y-6">
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h1 class="text-2xl font-bold text-gray-800">Category Management</h1>
-        <button onclick="openModal('addModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg">
+        <button onclick="openModal('addModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm w-full sm:w-auto text-center">
             <i class="fas fa-plus mr-2"></i>Add Category
         </button>
     </div>
@@ -53,9 +53,9 @@ require_once '../includes/header.php';
         <table class="w-full text-sm min-w-[600px]">
             <thead>
                 <tr class="bg-gray-50 border-b">
-                    <th class="px-6 py-3 text-left font-medium text-gray-500">ID</th>
+                    <th class="px-6 py-3 text-left font-medium text-gray-500 hide-mobile">ID</th>
                     <th class="px-6 py-3 text-left font-medium text-gray-500">Name</th>
-                    <th class="px-6 py-3 text-left font-medium text-gray-500">Description</th>
+                    <th class="px-6 py-3 text-left font-medium text-gray-500 hide-mobile">Description</th>
                     <th class="px-6 py-3 text-left font-medium text-gray-500">Status</th>
                     <th class="px-6 py-3 text-left font-medium text-gray-500">Actions</th>
                 </tr>
@@ -63,9 +63,9 @@ require_once '../includes/header.php';
             <tbody>
                 <?php foreach ($categories as $cat): ?>
                 <tr class="border-b hover:bg-gray-50">
-                    <td class="px-6 py-4"><?php echo $cat['id']; ?></td>
+                    <td class="px-6 py-4 hide-mobile"><?php echo $cat['id']; ?></td>
                     <td class="px-6 py-4 font-medium"><?php echo htmlspecialchars($cat['name']); ?></td>
-                    <td class="px-6 py-4 text-gray-500"><?php echo htmlspecialchars($cat['description'] ?? ''); ?></td>
+                    <td class="px-6 py-4 text-gray-500 hide-mobile"><?php echo htmlspecialchars($cat['description'] ?? ''); ?></td>
                     <td class="px-6 py-4">
                         <span class="px-2 py-1 text-xs rounded-full <?php echo $cat['status'] === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'; ?>">
                             <?php echo ucfirst($cat['status']); ?>

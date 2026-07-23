@@ -59,12 +59,31 @@ CREATE TABLE staff (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- Seats table
+CREATE TABLE seats (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    seat_number INT NOT NULL UNIQUE,
+    label VARCHAR(50) DEFAULT NULL,
+    status ENUM('active', 'maintenance') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Insert default seats
+INSERT INTO seats (seat_number, label) VALUES
+(1, 'Seat 1'),
+(2, 'Seat 2'),
+(3, 'Seat 3'),
+(4, 'Seat 4'),
+(5, 'Seat 5');
+
 -- Appointments table
 CREATE TABLE appointments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT NOT NULL,
     service_id INT NOT NULL,
     staff_id INT NOT NULL,
+    seat_id INT DEFAULT NULL,
     appointment_date DATE NOT NULL,
     appointment_time TIME NOT NULL,
     end_time TIME NOT NULL,
@@ -74,7 +93,8 @@ CREATE TABLE appointments (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE,
-    FOREIGN KEY (staff_id) REFERENCES staff(id) ON DELETE CASCADE
+    FOREIGN KEY (staff_id) REFERENCES staff(id) ON DELETE CASCADE,
+    FOREIGN KEY (seat_id) REFERENCES seats(id) ON DELETE SET NULL
 );
 
 -- Notifications table
@@ -101,6 +121,36 @@ CREATE TABLE incentive_settings (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (staff_id) REFERENCES staff(id) ON DELETE CASCADE
 );
+
+-- Reviews table
+CREATE TABLE reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    service_id INT NOT NULL,
+    staff_id INT NOT NULL,
+    appointment_id INT NOT NULL UNIQUE,
+    rating TINYINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    comment TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE,
+    FOREIGN KEY (staff_id) REFERENCES staff(id) ON DELETE CASCADE,
+    FOREIGN KEY (appointment_id) REFERENCES appointments(id) ON DELETE CASCADE
+);
+
+-- Salon settings table
+CREATE TABLE salon_settings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    setting_key VARCHAR(50) NOT NULL UNIQUE,
+    setting_value TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Insert default salon settings
+INSERT INTO salon_settings (setting_key, setting_value) VALUES
+('salon_name', 'Avocado Nail Studio'),
+('currency', 'MMK');
 
 -- Insert default admin account
 INSERT INTO users (username, email, password, full_name, role, status)

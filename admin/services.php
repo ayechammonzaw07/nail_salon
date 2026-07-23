@@ -63,9 +63,9 @@ foreach ($services as $svc) {
 require_once '../includes/header.php';
 ?>
 <div class="space-y-6">
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h1 class="text-2xl font-bold text-gray-800">Service Management</h1>
-        <button onclick="openModal('addModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg">
+        <button onclick="openModal('addModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm w-full sm:w-auto text-center">
             <i class="fas fa-plus mr-2"></i>Add Service
         </button>
     </div>
@@ -90,11 +90,11 @@ require_once '../includes/header.php';
         <table class="w-full text-sm min-w-[700px]">
             <thead>
                 <tr class="bg-gray-50 border-b">
-                    <th class="px-6 py-3 text-left font-medium text-gray-500">Image</th>
+                    <th class="px-6 py-3 text-left font-medium text-gray-500 hide-mobile">Image</th>
                     <th class="px-6 py-3 text-left font-medium text-gray-500">Name</th>
-                    <th class="px-6 py-3 text-left font-medium text-gray-500">Category</th>
+                    <th class="px-6 py-3 text-left font-medium text-gray-500 hide-mobile">Category</th>
                     <th class="px-6 py-3 text-left font-medium text-gray-500">Price</th>
-                    <th class="px-6 py-3 text-left font-medium text-gray-500">Duration</th>
+                    <th class="px-6 py-3 text-left font-medium text-gray-500 hide-mobile">Duration</th>
                     <th class="px-6 py-3 text-left font-medium text-gray-500">Status</th>
                     <th class="px-6 py-3 text-left font-medium text-gray-500">Actions</th>
                 </tr>
@@ -102,7 +102,7 @@ require_once '../includes/header.php';
             <tbody>
                 <?php foreach ($services as $svc): ?>
                 <tr class="border-b hover:bg-gray-50" data-category="<?php echo htmlspecialchars($svc['category_name'], ENT_QUOTES); ?>">
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 hide-mobile">
                         <?php if ($svc['image']): ?>
                             <img src="/nail/assets/uploads/<?php echo $svc['image']; ?>" alt="" class="w-12 h-12 object-cover rounded">
                         <?php else: ?>
@@ -110,9 +110,9 @@ require_once '../includes/header.php';
                         <?php endif; ?>
                     </td>
                     <td class="px-6 py-4 font-medium"><?php echo htmlspecialchars($svc['name']); ?></td>
-                    <td class="px-6 py-4"><?php echo htmlspecialchars($svc['category_name']); ?></td>
+                    <td class="px-6 py-4 hide-mobile"><?php echo htmlspecialchars($svc['category_name']); ?></td>
                     <td class="px-6 py-4 text-green-600 font-medium">MMK<?php echo number_format($svc['price'], 2); ?></td>
-                    <td class="px-6 py-4"><?php echo $svc['duration']; ?> min</td>
+                    <td class="px-6 py-4 hide-mobile"><?php echo $svc['duration']; ?> min</td>
                     <td class="px-6 py-4">
                         <span class="px-2 py-1 text-xs rounded-full <?php echo $svc['status'] === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'; ?>">
                             <?php echo ucfirst($svc['status']); ?>

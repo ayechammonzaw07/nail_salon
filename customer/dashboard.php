@@ -5,19 +5,35 @@ requireCustomer();
 
 $title = 'Home';
 
-$stmt = $pdo->prepare("
-    SELECT a.*, s.name as service_name, s.price, s.duration, st.name as staff_name, st.photo as staff_photo,
-           c.name as category_name
-    FROM appointments a
-    JOIN services s ON a.service_id = s.id
-    JOIN staff st ON a.staff_id = st.id
-    JOIN categories c ON s.category_id = c.id
-    WHERE a.customer_id = ? AND a.appointment_date >= CURDATE() AND a.status NOT IN ('completed', 'cancelled')
-    ORDER BY a.appointment_date, a.appointment_time
-    LIMIT 5
+$stmt = $pdo->query("SHOW TABLES LIKE 'reviews'");
+if (!$stmt->fetch()) {
+    $pdo->exec("CREATE TABLE reviews (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        customer_id INT NOT NULL,
+        service_id INT NOT NULL,
+        staff_id INT NOT NULL,
+        appointment_id INT NOT NULL UNIQUE,
+        rating TINYINT NOT NULL,
+        comment TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE,
+        FOREIGN KEY (staff_id) REFERENCES staff(id) ON DELETE CASCADE,
+        FOREIGN KEY (appointment_id) REFERENCES appointments(id) ON DELETE CASCADE
+    )");
+}
+
+$reviews = $pdo->prepare("
+    SELECT r.*, s.name as service_name, st.name as staff_name, u.full_name as customer_name
+    FROM reviews r
+    JOIN services s ON r.service_id = s.id
+    JOIN staff st ON r.staff_id = st.id
+    JOIN users u ON r.customer_id = u.id
+    ORDER BY r.created_at DESC
+    LIMIT 6
 ");
-$stmt->execute([$_SESSION['user_id']]);
-$upcoming = $stmt->fetchAll();
+$reviews->execute();
+$reviews = $reviews->fetchAll();
 
 $services = $pdo->query("SELECT s.*, c.name as category_name FROM services s JOIN categories c ON s.category_id = c.id WHERE s.status='active' ORDER BY c.name")->fetchAll();
 
@@ -85,46 +101,37 @@ require_once '../includes/header.php';
     </div>
 </section>
 
-<?php if (!empty($upcoming)): ?>
-<section class="section" style="padding:3rem 2rem;">
+<?php if (!empty($reviews)): ?>
+<section class="section" style="padding:3rem 2rem;background:var(--avocado-50);">
     <div class="container">
         <div class="section-header">
-            <span class="tag">Upcoming</span>
-            <h2>Your <span>Appointments</span></h2>
-            <p>Here are your scheduled sessions. Can't make it? Let us know in advance.</p>
+            <span class="tag">Reviews</span>
+            <h2>What Our <span>Clients</span> Say</h2>
+            <p>Real feedback from our happy customers.</p>
         </div>
-        <div style="max-width:800px;margin:0 auto;">
-            <?php foreach ($upcoming as $apt): ?>
-            <div style="display:flex;align-items:center;justify-content:space-between;background:white;padding:1.2rem 1.5rem;border-radius:16px;box-shadow:0 2px 15px rgba(0,0,0,0.04);border:1px solid rgba(124,179,66,0.1);margin-bottom:1rem;flex-wrap:wrap;gap:1rem;">
-                <div style="display:flex;align-items:center;gap:1rem;">
-                    <div style="background:var(--avocado-100);border-radius:12px;padding:0.7rem 1rem;text-align:center;min-width:60px;">
-                        <p style="font-size:1.3rem;font-weight:700;color:var(--avocado-700);margin:0;"><?php echo date('d', strtotime($apt['appointment_date'])); ?></p>
-                        <p style="font-size:0.7rem;color:var(--avocado-500);text-transform:uppercase;font-weight:600;margin:0;"><?php echo date('M', strtotime($apt['appointment_date'])); ?></p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;max-width:1000px;margin:0 auto;">
+            <?php foreach ($reviews as $rev): ?>
+            <div style="background:white;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.04);border:1px solid rgba(124,179,66,0.08);">
+                <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.8rem;">
+                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                    <i class="fas fa-star" style="color:<?php echo $i <= $rev['rating'] ? '#f59e0b' : '#d1d5db'; ?>;font-size:0.85rem;"></i>
+                    <?php endfor; ?>
+                    <span style="font-size:0.8rem;color:var(--text-light);margin-left:0.3rem;"><?php echo date('M d, Y', strtotime($rev['created_at'])); ?></span>
+                </div>
+                <?php if (!empty($rev['comment'])): ?>
+                <p style="font-size:0.9rem;color:var(--dark);line-height:1.6;margin:0 0 1rem;"><?php echo htmlspecialchars($rev['comment']); ?></p>
+                <?php endif; ?>
+                <div style="display:flex;align-items:center;gap:0.8rem;padding-top:0.8rem;border-top:1px solid var(--avocado-100);">
+                    <div style="width:36px;height:36px;background:var(--avocado-100);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-user" style="color:var(--avocado-600);font-size:0.8rem;"></i>
                     </div>
                     <div>
-                        <p style="font-weight:600;color:var(--dark);margin:0;"><?php echo htmlspecialchars($apt['service_name']); ?></p>
-                        <p style="font-size:0.85rem;color:var(--text-light);margin:0.2rem 0 0;">
-                            <i class="fas fa-user"></i> <?php echo htmlspecialchars($apt['staff_name']); ?>
-                            &nbsp;&nbsp;<i class="fas fa-clock"></i> <?php echo date('h:i A', strtotime($apt['appointment_time'])); ?>
-                        </p>
+                        <p style="font-weight:600;color:var(--dark);margin:0;font-size:0.85rem;"><?php echo htmlspecialchars($rev['customer_name']); ?></p>
+                        <p style="font-size:0.75rem;color:var(--text-light);margin:0;"><?php echo htmlspecialchars($rev['service_name']); ?> with <?php echo htmlspecialchars($rev['staff_name']); ?></p>
                     </div>
                 </div>
-                <span style="padding:0.3rem 0.8rem;border-radius:50px;font-size:0.75rem;font-weight:600;
-                    <?php echo match($apt['status']) {
-                        'pending' => 'background:#fef3c7;color:#b45309;',
-                        'confirmed' => 'background:#dbeafe;color:#1d4ed8;',
-                        'in_progress' => 'background:#ede9fe;color:#7c3aed;',
-                        default => 'background:#f3f4f6;color:#6b7280;'
-                    }; ?>">
-                    <?php echo ucfirst(str_replace('_', ' ', $apt['status'])); ?>
-                </span>
             </div>
             <?php endforeach; ?>
-        </div>
-        <div style="text-align:center;margin-top:1.5rem;">
-            <a href="appointments.php" class="btn-outline" style="font-size:0.9rem;">
-                <i class="fas fa-list"></i> View All Appointments
-            </a>
         </div>
     </div>
 </section>

@@ -5,13 +5,33 @@ requireCustomer();
 
 $title = 'My Appointments';
 
+$stmt = $pdo->query("SHOW TABLES LIKE 'reviews'");
+if (!$stmt->fetch()) {
+    $pdo->exec("CREATE TABLE reviews (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        customer_id INT NOT NULL,
+        service_id INT NOT NULL,
+        staff_id INT NOT NULL,
+        appointment_id INT NOT NULL UNIQUE,
+        rating TINYINT NOT NULL,
+        comment TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE,
+        FOREIGN KEY (staff_id) REFERENCES staff(id) ON DELETE CASCADE,
+        FOREIGN KEY (appointment_id) REFERENCES appointments(id) ON DELETE CASCADE
+    )");
+}
+
 $filter = $_GET['filter'] ?? 'upcoming';
 
-$sql = "SELECT a.*, s.name as service_name, s.price as service_price, s.duration, st.name as staff_name, st.photo as staff_photo, c.name as category_name
+$sql = "SELECT a.*, s.name as service_name, s.price as service_price, s.duration, st.name as staff_name, st.photo as staff_photo, c.name as category_name,
+        r.id as review_id
         FROM appointments a
         JOIN services s ON a.service_id = s.id
         JOIN staff st ON a.staff_id = st.id
         JOIN categories c ON s.category_id = c.id
+        LEFT JOIN reviews r ON r.appointment_id = a.id
         WHERE a.customer_id = ?";
 
 if ($filter === 'upcoming') {
@@ -95,6 +115,11 @@ require_once '../includes/header.php';
                             }; ?>">
                             <?php echo ucfirst(str_replace('_', ' ', $apt['status'])); ?>
                         </span>
+                        <?php if ($apt['status'] === 'completed' && empty($apt['review_id'])): ?>
+                        <a href="review.php?id=<?php echo $apt['id']; ?>" class="inline-flex items-center gap-1 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 px-3 py-1.5 rounded-lg text-xs font-medium transition">
+                            <i class="fas fa-star"></i> Rate
+                        </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

@@ -25,12 +25,12 @@ $notifications = $stmt->fetchAll();
 require_once '../includes/header.php';
 ?>
 <div class="space-y-6">
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h1 class="text-2xl font-bold text-emerald-900">
             <i class="fas fa-bell text-emerald-500 mr-2"></i>Notifications
         </h1>
-        <div class="flex space-x-2">
-            <a href="?mark_read=all" class="px-4 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700">
+        <div class="flex space-x-2 w-full sm:w-auto">
+            <a href="?mark_read=all" class="px-4 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 text-center">
                 <i class="fas fa-check-double mr-1"></i>Mark All Read
             </a>
         </div>

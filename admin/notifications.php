@@ -25,11 +25,11 @@ $notifications = $stmt->fetchAll();
 require_once '../includes/header.php';
 ?>
 <div class="space-y-6">
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h1 class="text-2xl font-bold text-gray-800">
             <i class="fas fa-bell text-emerald-500 mr-2"></i>Notifications
         </h1>
-        <div class="flex space-x-2">
+        <div class="flex space-x-2 w-full sm:w-auto">
             <a href="?mark_read=all" class="px-4 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700">
                 <i class="fas fa-check-double mr-1"></i>Mark All Read
             </a>
@@ -59,7 +59,7 @@ require_once '../includes/header.php';
                             </a>
                         <?php endif; ?>
                         <?php if ($n['appointment_id']): ?>
-                            <a href="appointments.php?date=<?php echo date('Y-m-d'); ?>" class="text-xs text-blue-600 hover:text-blue-700">
+                            <a href="appointments.php" class="text-xs text-blue-600 hover:text-blue-700" title="View Appointment">
                                 <i class="fas fa-external-link-alt"></i>
                             </a>
                         <?php endif; ?>

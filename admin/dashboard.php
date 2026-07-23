@@ -28,6 +28,20 @@ require_once '../includes/header.php';
 <div class="space-y-6">
     <h1 class="text-2xl font-bold text-emerald-900">Admin Dashboard</h1>
 
+    <!-- Upcoming Appointment Alert -->
+    <div id="upcomingAlert" class="hidden">
+        <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl shadow-sm overflow-hidden">
+            <div class="bg-amber-500 text-white px-4 py-2 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-bell"></i>
+                    <span class="font-semibold text-sm">Upcoming Appointments (Next 30 Minutes)</span>
+                </div>
+                <span id="upcomingCount" class="bg-white/20 px-2 py-0.5 rounded-full text-xs font-bold">0</span>
+            </div>
+            <div id="upcomingList" class="divide-y divide-amber-100"></div>
+        </div>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div class="bg-white rounded-xl shadow-sm border p-6">
             <div class="flex items-center justify-between">
@@ -147,4 +161,129 @@ require_once '../includes/header.php';
         </div>
     </div>
 </div>
+<script>
+function fetchUpcoming() {
+    fetch('/nail/includes/upcoming_appointments_api.php')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.error || !data.appointments.length) {
+                document.getElementById('upcomingAlert').classList.add('hidden');
+                return;
+            }
+            var apts = data.appointments;
+            document.getElementById('upcomingAlert').classList.remove('hidden');
+            document.getElementById('upcomingCount').textContent = apts.length;
+
+            var html = '';
+            apts.forEach(function(apt) {
+                var urgencyBorder = apt.urgency === 'critical' ? 'border-l-4 border-l-red-500' :
+                                   apt.urgency === 'warning' ? 'border-l-4 border-l-amber-400' :
+                                   'border-l-4 border-l-blue-400';
+                var timeBadge = apt.urgency === 'critical' ?
+                    '<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded-full text-xs font-bold animate-pulse">' + apt.minutes_until + ' min</span>' :
+                    apt.urgency === 'warning' ?
+                    '<span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-xs font-bold">' + apt.minutes_until + ' min</span>' :
+                    '<span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-bold">' + apt.minutes_until + ' min</span>';
+
+                html += '<div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 hover:bg-amber-50/50 transition ' + urgencyBorder + '">';
+                html += '  <div class="flex items-start gap-3 mb-2 sm:mb-0">';
+                html += '    <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">';
+                html += '      <i class="fas fa-user text-amber-600 text-sm"></i>';
+                html += '    </div>';
+                html += '    <div>';
+                html += '      <div class="flex items-center gap-2 flex-wrap">';
+                html += '        <span class="font-semibold text-gray-800 text-sm">' + escapeHtml(apt.customer_name) + '</span>';
+                html += '        <span class="text-xs px-1.5 py-0.5 rounded ' + (apt.status === 'confirmed' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700') + '">' + apt.status + '</span>';
+                html += '        ' + timeBadge;
+                html += '      </div>';
+                html += '      <p class="text-xs text-gray-500 mt-0.5">' + escapeHtml(apt.service_name) + ' &mdash; ' + apt.time + ' - ' + apt.end_time + '</p>';
+                html += '      <p class="text-xs text-gray-400 mt-0.5"><i class="fas fa-user-tie mr-1"></i>' + escapeHtml(apt.staff_name) + (apt.seat_label ? ' &middot; <i class="fas fa-chair mr-1"></i>' + escapeHtml(apt.seat_label) : '') + '</p>';
+                if (apt.customer_phone) {
+                    html += '      <p class="text-xs text-gray-400 mt-0.5"><i class="fas fa-phone mr-1"></i>' + escapeHtml(apt.customer_phone) + '</p>';
+                }
+                html += '    </div>';
+                html += '  </div>';
+                html += '  <div class="flex items-center gap-2 ml-13 sm:ml-0">';
+                html += '    <button type="button" class="bg-green-500 hover:bg-green-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition flex items-center gap-1 confirm-btn" data-apt-id="' + apt.id + '" data-customer="' + escapeHtml(apt.customer_name) + '" data-service="' + escapeHtml(apt.service_name) + '" data-time="' + apt.time + '">';
+                html += '      <i class="fas fa-check"></i> Confirm';
+                html += '    </button>';
+                html += '    <button type="button" class="bg-red-100 hover:bg-red-200 text-red-700 text-xs font-medium px-3 py-1.5 rounded-lg transition flex items-center gap-1 no-show-btn" data-apt-id="' + apt.id + '" data-customer="' + escapeHtml(apt.customer_name) + '" data-service="' + escapeHtml(apt.service_name) + '" data-time="' + apt.time + '">';
+                html += '      <i class="fas fa-times"></i> No Show';
+                html += '    </button>';
+                html += '  </div>';
+                html += '</div>';
+            });
+            document.getElementById('upcomingList').innerHTML = html;
+
+            document.querySelectorAll('.confirm-btn').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var aptId = this.dataset.aptId;
+                    var customer = this.dataset.customer;
+                    var service = this.dataset.service;
+                    var time = this.dataset.time;
+                    Swal.fire({
+                        title: 'Confirm Attendance?',
+                        html: 'Is <strong>' + customer + '</strong> coming for <strong>' + service + '</strong> at <strong>' + time + '</strong>?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#059669',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Yes, Confirmed',
+                        cancelButtonText: 'Cancel'
+                    }).then(function(result) {
+                        if (result.isConfirmed) {
+                            var form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = '/nail/admin/appointments.php';
+                            form.innerHTML = '<input type="hidden" name="action" value="update_status"><input type="hidden" name="id" value="' + aptId + '"><input type="hidden" name="status" value="confirmed">';
+                            document.body.appendChild(form);
+                            form.submit();
+                        }
+                    });
+                });
+            });
+
+            document.querySelectorAll('.no-show-btn').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var aptId = this.dataset.aptId;
+                    var customer = this.dataset.customer;
+                    var service = this.dataset.service;
+                    var time = this.dataset.time;
+                    Swal.fire({
+                        title: 'Mark as No Show?',
+                        html: 'Mark <strong>' + customer + '</strong> as no-show for <strong>' + service + '</strong> at <strong>' + time + '</strong>? This will cancel the appointment.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc2626',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Yes, Mark No Show',
+                        cancelButtonText: 'Cancel'
+                    }).then(function(result) {
+                        if (result.isConfirmed) {
+                            var form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = '/nail/admin/appointments.php';
+                            form.innerHTML = '<input type="hidden" name="action" value="update_status"><input type="hidden" name="id" value="' + aptId + '"><input type="hidden" name="status" value="cancelled">';
+                            document.body.appendChild(form);
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        })
+        .catch(function() {});
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+}
+
+fetchUpcoming();
+setInterval(fetchUpcoming, 60000);
+</script>
 <?php require_once '../includes/footer.php'; ?>

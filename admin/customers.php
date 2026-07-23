@@ -40,12 +40,12 @@ require_once '../includes/header.php';
             <thead>
                 <tr class="bg-gray-50 border-b">
                     <th class="px-6 py-3 text-left font-medium text-gray-500">Name</th>
-                    <th class="px-6 py-3 text-left font-medium text-gray-500">Email</th>
-                    <th class="px-6 py-3 text-left font-medium text-gray-500">Phone</th>
+                    <th class="px-6 py-3 text-left font-medium text-gray-500 hide-mobile">Email</th>
+                    <th class="px-6 py-3 text-left font-medium text-gray-500 hide-mobile">Phone</th>
                     <th class="px-6 py-3 text-left font-medium text-gray-500">Appointments</th>
-                    <th class="px-6 py-3 text-left font-medium text-gray-500">Completed</th>
+                    <th class="px-6 py-3 text-left font-medium text-gray-500 hide-mobile">Completed</th>
                     <th class="px-6 py-3 text-left font-medium text-gray-500">Total Spent</th>
-                    <th class="px-6 py-3 text-left font-medium text-gray-500">Joined</th>
+                    <th class="px-6 py-3 text-left font-medium text-gray-500 hide-mobile">Joined</th>
                     <th class="px-6 py-3 text-left font-medium text-gray-500">Actions</th>
                 </tr>
             </thead>
@@ -53,12 +53,12 @@ require_once '../includes/header.php';
                 <?php foreach ($customers as $c): ?>
                 <tr class="border-b hover:bg-gray-50">
                     <td class="px-6 py-4 font-medium"><?php echo htmlspecialchars($c['full_name']); ?></td>
-                    <td class="px-6 py-4"><?php echo htmlspecialchars($c['email']); ?></td>
-                    <td class="px-6 py-4"><?php echo htmlspecialchars($c['phone'] ?? 'N/A'); ?></td>
+                    <td class="px-6 py-4 hide-mobile"><?php echo htmlspecialchars($c['email']); ?></td>
+                    <td class="px-6 py-4 hide-mobile"><?php echo htmlspecialchars($c['phone'] ?? 'N/A'); ?></td>
                     <td class="px-6 py-4"><?php echo $c['total_appointments']; ?></td>
-                    <td class="px-6 py-4"><?php echo $c['completed_appointments']; ?></td>
+                    <td class="px-6 py-4 hide-mobile"><?php echo $c['completed_appointments']; ?></td>
                     <td class="px-6 py-4 text-green-600 font-medium">MMK<?php echo number_format($c['total_spent'], 2); ?></td>
-                    <td class="px-6 py-4"><?php echo date('M d, Y', strtotime($c['created_at'])); ?></td>
+                    <td class="px-6 py-4 hide-mobile"><?php echo date('M d, Y', strtotime($c['created_at'])); ?></td>
                     <td class="px-6 py-4">
                         <a href="?view=<?php echo $c['id']; ?>" class="text-emerald-600 hover:text-emerald-700">
                             <i class="fas fa-eye"></i> View History

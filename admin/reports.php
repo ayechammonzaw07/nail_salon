@@ -108,11 +108,11 @@ require_once '../includes/header.php';
                 <p><?php echo date('F d, Y', strtotime($date)); ?></p>
             </div>
             <div class="bg-white rounded-xl shadow-sm border p-6">
-                <div class="flex justify-between items-center mb-6 no-print">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 no-print">
                     <h3 class="text-lg font-semibold">
                         <i class="fas fa-calendar-day text-emerald-500 mr-2"></i>Daily Revenue Report
                     </h3>
-                    <div class="flex items-center space-x-2">
+                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                         <a href="export_report.php?type=daily&date=<?php echo $date; ?>" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 inline-flex items-center">
                             <i class="fas fa-file-excel mr-2"></i>Export Excel
                         </a>
@@ -183,11 +183,11 @@ require_once '../includes/header.php';
                 <p><?php echo date('F Y', strtotime($month . '-01')); ?></p>
             </div>
             <div class="bg-white rounded-xl shadow-sm border p-6">
-                <div class="flex justify-between items-center mb-6 no-print">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 no-print">
                     <h3 class="text-lg font-semibold">
                         <i class="fas fa-calendar-alt text-emerald-500 mr-2"></i>Monthly Revenue Report
                     </h3>
-                    <div class="flex items-center space-x-2">
+                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                         <a href="export_report.php?type=monthly&month=<?php echo $month; ?>" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 inline-flex items-center">
                             <i class="fas fa-file-excel mr-2"></i>Export Excel
                         </a>
@@ -294,11 +294,11 @@ require_once '../includes/header.php';
         ?>
         <div class="print-area">
             <div class="print-header" style="display:none">
-                <h1>Nail Salon - Appointment Report</h1>
+                <h1>Nail Salon - Appointment List</h1>
                 <p><?php echo date('F d, Y', strtotime($date_from)) . ' - ' . date('F d, Y', strtotime($date_to)); ?></p>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
-                <div class="flex flex-wrap items-center justify-between gap-4 no-print">
+            <div class="bg-white rounded-xl shadow-sm border p-6 mb-6 no-print">
+                <div class="flex flex-wrap items-center justify-between gap-4">
                     <h3 class="text-lg font-semibold"><i class="fas fa-calendar-alt text-emerald-500 mr-2"></i>Appointment Report</h3>
                     <form method="GET" class="flex flex-wrap items-center gap-2">
                         <input type="hidden" name="type" value="appointments">
@@ -324,7 +324,7 @@ require_once '../includes/header.php';
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6 no-print">
                 <?php foreach ($statuses as $st): ?>
                     <?php
                     $st_data = $stat_map[$st] ?? ['count' => 0, 'total' => 0];
@@ -414,9 +414,9 @@ require_once '../includes/header.php';
                 <p><?php echo date('F d, Y'); ?></p>
             </div>
             <div class="bg-white rounded-xl shadow-sm border p-6">
-                <div class="flex justify-between items-center mb-4 no-print">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 no-print">
                     <h3 class="text-lg font-semibold"><i class="fas fa-star text-emerald-500 mr-2"></i>Popular Services Report</h3>
-                    <div class="flex items-center space-x-2">
+                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                         <a href="export_report.php?type=popular" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 inline-flex items-center">
                             <i class="fas fa-file-excel mr-2"></i>Export Excel
                         </a>
@@ -490,11 +490,11 @@ require_once '../includes/header.php';
                 <p><?php echo date('F Y', strtotime($month . '-01')); ?></p>
             </div>
             <div class="bg-white rounded-xl shadow-sm border p-6">
-                <div class="flex justify-between items-center mb-6 no-print">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 no-print">
                     <h3 class="text-lg font-semibold">
                         <i class="fas fa-coins text-emerald-500 mr-2"></i>Staff Incentive Report
                     </h3>
-                    <div class="flex items-center space-x-2">
+                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                         <a href="export_report.php?type=incentive&month=<?php echo $month; ?>" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 inline-flex items-center">
                             <i class="fas fa-file-excel mr-2"></i>Export Excel
                         </a>
