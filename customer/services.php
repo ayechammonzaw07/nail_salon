@@ -39,7 +39,7 @@ require_once '../includes/header.php';
         <?php foreach ($services as $svc): ?>
         <div class="bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition group">
             <?php if ($svc['image']): ?>
-                <img src="/nail/assets/uploads/<?php echo $svc['image']; ?>" alt="" class="w-full h-48 object-cover group-hover:scale-105 transition duration-300">
+                <img src="/nail_salon/assets/uploads/<?php echo $svc['image']; ?>" alt="" class="w-full h-48 object-cover group-hover:scale-105 transition duration-300">
             <?php else: ?>
                 <div class="w-full h-48 bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center">
                     <i class="fas fa-leaf text-emerald-300 text-5xl"></i>

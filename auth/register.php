@@ -3,7 +3,7 @@ require_once '../config/database.php';
 require_once '../includes/session.php';
 
 if (isLoggedIn()) {
-    header('Location: ' . (isAdmin() ? '/nail/admin/dashboard.php' : '/nail/customer/dashboard.php'));
+    header('Location: ' . (isAdmin() ? '/nail_salon/admin/dashboard.php' : '/nail_salon/customer/dashboard.php'));
     exit;
 }
 
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Register - Avocado Nail</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="/nail/assets/css/style.css">
+    <link rel="stylesheet" href="/nail_salon/assets/css/style.css">
 </head>
 <body class="bg-gradient-to-br from-emerald-100 to-emerald-50 min-h-screen flex items-center justify-center">
     <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-lg m-4">
@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="login.php" class="text-emerald-600 hover:text-emerald-700 font-semibold">Sign In</a>
         </p>
         <p class="text-center mt-2">
-            <a href="/nail/index.php" class="text-gray-400 hover:text-emerald-600 text-sm">
+            <a href="/nail_salon/index.php" class="text-gray-400 hover:text-emerald-600 text-sm">
                 <i class="fas fa-arrow-left mr-1"></i>Back to Home
             </a>
         </p>

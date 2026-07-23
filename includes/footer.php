@@ -11,18 +11,18 @@
             <div class="footer-col">
                 <h4>Quick Links</h4>
                 <ul>
-                    <li><a href="/nail/customer/dashboard.php">Home</a></li>
-                    <li><a href="/nail/customer/services.php">Services</a></li>
-                    <li><a href="/nail/customer/staff.php">Our Team</a></li>
-                    <li><a href="/nail/customer/booking.php">Book Now</a></li>
+                    <li><a href="/nail_salon/customer/dashboard.php">Home</a></li>
+                    <li><a href="/nail_salon/customer/services.php">Services</a></li>
+                    <li><a href="/nail_salon/customer/staff.php">Our Team</a></li>
+                    <li><a href="/nail_salon/customer/booking.php">Book Now</a></li>
                 </ul>
             </div>
             <div class="footer-col">
                 <h4>Account</h4>
                 <ul>
-                    <li><a href="/nail/customer/profile.php">My Profile</a></li>
-                    <li><a href="/nail/auth/change-password.php">Change Password</a></li>
-                    <li><a href="/nail/auth/logout.php">Logout</a></li>
+                    <li><a href="/nail_salon/customer/profile.php">My Profile</a></li>
+                    <li><a href="/nail_salon/auth/change-password.php">Change Password</a></li>
+                    <li><a href="/nail_salon/auth/logout.php">Logout</a></li>
                 </ul>
             </div>
             <div class="footer-col">

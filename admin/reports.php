@@ -237,6 +237,7 @@ require_once '../includes/header.php';
         </div>
     <?php elseif ($report_type === 'appointments'): ?>
         <?php
+<<<<<<< HEAD
         $date_from = $_GET['date_from'] ?? date('Y-m-01');
         $date_to = $_GET['date_to'] ?? date('Y-m-d');
         $status_filter = $_GET['status'] ?? '';
@@ -265,6 +266,10 @@ require_once '../includes/header.php';
 
         $stats_stmt = $pdo->query("
             SELECT a.status, COUNT(*) AS count, COALESCE(SUM(s.price), 0) AS total
+=======
+        $stmt = $pdo->query("
+            SELECT a.status, COUNT(*) as count, COALESCE(SUM(s.price), 0) as total
+>>>>>>> 86fe5cd91b098bac9679512c3d19e52dbe3943d5
             FROM appointments a
             LEFT JOIN services s ON a.service_id = s.id
             GROUP BY a.status

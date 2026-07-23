@@ -15,7 +15,7 @@ function isCustomer() {
 
 function requireLogin() {
     if (!isLoggedIn()) {
-        header('Location: /nail/auth/login.php');
+        header('Location: /nail_salon/auth/login.php');
         exit;
     }
 }
@@ -23,7 +23,7 @@ function requireLogin() {
 function requireAdmin() {
     requireLogin();
     if (!isAdmin()) {
-        header('Location: /nail/customer/dashboard.php');
+        header('Location: /nail_salon/customer/dashboard.php');
         exit;
     }
 }
@@ -31,7 +31,7 @@ function requireAdmin() {
 function requireCustomer() {
     requireLogin();
     if (!isCustomer()) {
-        header('Location: /nail/admin/dashboard.php');
+        header('Location: /nail_salon/admin/dashboard.php');
         exit;
     }
 }

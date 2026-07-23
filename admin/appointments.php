@@ -5,6 +5,7 @@ requireAdmin();
 
 $title = 'Appointments';
 $message = '';
+$swal_error = '';
 
 // Mark notifications as read when arriving from bell
 if (isset($_GET['mark_read'])) {
@@ -21,25 +22,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($action === 'update_status') {
         $id = $_POST['id'];
         $status = $_POST['status'];
-        $stmt = $pdo->prepare("UPDATE appointments SET status=? WHERE id=?");
-        $stmt->execute([$status, $id]);
+        if ($status === '') {
+            $message = 'No status selected.';
+        } else {
+            $check = $pdo->prepare("SELECT appointment_date FROM appointments WHERE id = ?");
+            $check->execute([$id]);
+            $apt_row = $check->fetch();
 
-        $apt = $pdo->prepare("SELECT a.*, u.full_name as customer_name FROM appointments a JOIN users u ON a.customer_id = u.id WHERE a.id = ?");
-        $apt->execute([$id]);
-        $apt_row = $apt->fetch();
-        if ($apt_row) {
-            require_once '../includes/notifications.php';
-            $status_label = ucfirst(str_replace('_', ' ', $status));
-            createNotification($pdo, $apt_row['customer_id'], 'status_change', 'Appointment ' . $status_label, 'Your appointment (#' . $id . ') has been ' . $status_label . '.', $id);
+            if ($apt_row && $apt_row['appointment_date'] < date('Y-m-d')) {
+                $swal_error = 'Cannot change status for past appointments.';
+            } else {
+                $stmt = $pdo->prepare("UPDATE appointments SET status=? WHERE id=?");
+                $stmt->execute([$status, $id]);
+
+                $apt = $pdo->prepare("SELECT a.*, u.full_name as customer_name FROM appointments a JOIN users u ON a.customer_id = u.id WHERE a.id = ?");
+                $apt->execute([$id]);
+                $apt_notif = $apt->fetch();
+                if ($apt_notif) {
+                    require_once '../includes/notifications.php';
+                    $status_label = ucfirst(str_replace('_', ' ', $status));
+                    createNotification($pdo, $apt_notif['customer_id'], 'status_change', 'Appointment ' . $status_label, 'Your appointment (#' . $id . ') has been ' . $status_label . '.', $id);
+                }
+
+                $message = 'Appointment status updated.';
+            }
         }
-
-        $message = 'Appointment status updated.';
     } elseif ($action === 'assign_staff') {
         $id = $_POST['id'];
         $staff_id = $_POST['staff_id'];
-        $stmt = $pdo->prepare("UPDATE appointments SET staff_id=? WHERE id=?");
-        $stmt->execute([$staff_id, $id]);
-        $message = 'Staff assigned.';
+        $check = $pdo->prepare("SELECT appointment_date FROM appointments WHERE id = ?");
+        $check->execute([$id]);
+        $apt_row = $check->fetch();
+
+        if ($apt_row && $apt_row['appointment_date'] < date('Y-m-d')) {
+            $swal_error = 'Cannot change staff for past appointments.';
+        } else {
+            $stmt = $pdo->prepare("UPDATE appointments SET staff_id=? WHERE id=?");
+            $stmt->execute([$staff_id, $id]);
+            $message = 'Staff assigned.';
+        }
     }
 }
 
@@ -245,6 +266,7 @@ require_once '../includes/header.php';
         </table>
     </div>
 </div>
+<<<<<<< HEAD
 <script>
 document.querySelectorAll('.status-select').forEach(function(sel) {
     sel.addEventListener('change', function(e) {
@@ -409,3 +431,16 @@ fetchUpcoming();
 setInterval(fetchUpcoming, 60000);
 </script>
 <?php require_once '../includes/footer.php'; ?>
+=======
+<?php if ($swal_error): ?>
+<script>
+Swal.fire({
+    icon: 'error',
+    title: 'Error',
+    text: '<?php echo $swal_error; ?>',
+    confirmButtonColor: '#059669'
+});
+</script>
+<?php endif; ?>
+<?php require_once '../includes/footer.php'; ?>
+>>>>>>> 86fe5cd91b098bac9679512c3d19e52dbe3943d5
