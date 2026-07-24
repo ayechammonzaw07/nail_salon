@@ -81,9 +81,6 @@ require_once '../includes/header.php';
         <a href="?type=popular" class="px-4 py-2 rounded-lg text-sm font-medium <?php echo $report_type === 'popular' ? 'bg-emerald-600 text-white' : 'bg-white text-gray-600 border hover:bg-gray-50'; ?>">
             <i class="fas fa-star mr-2"></i>Popular Services
         </a>
-        <a href="?type=incentive" class="px-4 py-2 rounded-lg text-sm font-medium <?php echo $report_type === 'incentive' ? 'bg-emerald-600 text-white' : 'bg-white text-gray-600 border hover:bg-gray-50'; ?>">
-            <i class="fas fa-coins mr-2"></i>Incentive Report
-        </a>
     </div>
 
     <?php if ($report_type === 'daily'): ?>
@@ -237,7 +234,6 @@ require_once '../includes/header.php';
         </div>
     <?php elseif ($report_type === 'appointments'): ?>
         <?php
-<<<<<<< HEAD
         $date_from = $_GET['date_from'] ?? date('Y-m-01');
         $date_to = $_GET['date_to'] ?? date('Y-m-d');
         $status_filter = $_GET['status'] ?? '';
@@ -266,10 +262,6 @@ require_once '../includes/header.php';
 
         $stats_stmt = $pdo->query("
             SELECT a.status, COUNT(*) AS count, COALESCE(SUM(s.price), 0) AS total
-=======
-        $stmt = $pdo->query("
-            SELECT a.status, COUNT(*) as count, COALESCE(SUM(s.price), 0) as total
->>>>>>> 86fe5cd91b098bac9679512c3d19e52dbe3943d5
             FROM appointments a
             LEFT JOIN services s ON a.service_id = s.id
             GROUP BY a.status
@@ -368,7 +360,9 @@ require_once '../includes/header.php';
                         </thead>
                         <tbody>
                             <?php if (empty($filtered)): ?>
-                                <tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">No appointments found for the selected filters.</td></tr>
+                                <tr>
+                                    <td colspan="6" class="px-4 py-8 text-center text-gray-400">No appointments found for the selected filters.</td>
+                                </tr>
                             <?php else: ?>
                                 <?php foreach ($filtered as $a): ?>
                                     <tr class="border-b hover:bg-gray-50">
@@ -449,112 +443,6 @@ require_once '../includes/header.php';
                         </div>
                     <?php endforeach; ?>
                 </div>
-            </div>
-        </div>
-    <?php elseif ($report_type === 'incentive'): ?>
-        <?php
-        $month = $_GET['month'] ?? date('Y-m');
-        $stmt = $pdo->prepare("
-            SELECT a.appointment_date, a.appointment_time,
-                   st.name AS staff_name, st.specialization,
-                   s.name AS service_name, s.price AS service_price,
-                   COALESCE(inc.rate, 10.00) AS rate
-            FROM appointments a
-            JOIN staff st ON a.staff_id = st.id
-            JOIN services s ON a.service_id = s.id
-            LEFT JOIN incentive_settings inc ON st.id = inc.staff_id
-            WHERE a.status = 'completed' AND DATE_FORMAT(a.appointment_date, '%Y-%m') = ?
-            ORDER BY a.appointment_date, a.appointment_time, st.name
-        ");
-        $stmt->execute([$month]);
-        $rows = $stmt->fetchAll();
-
-        $incentive_rows = [];
-        $total_incentive = 0;
-        $total_revenue = 0;
-        foreach ($rows as $row) {
-            $rate = $row['rate'] / 100;
-            $incentive = $row['service_price'] * $rate;
-            $total_incentive += $incentive;
-            $total_revenue += $row['service_price'];
-            $incentive_rows[] = [
-                'date' => $row['appointment_date'],
-                'time' => $row['appointment_time'],
-                'staff_name' => $row['staff_name'],
-                'specialization' => $row['specialization'] ?: 'N/A',
-                'service_name' => $row['service_name'],
-                'rate' => $rate,
-                'amount' => $row['service_price'],
-                'incentive' => $incentive,
-            ];
-        }
-        ?>
-        <div class="print-area">
-            <div class="print-header" style="display:none">
-                <h1>Nail Salon - Incentive Report</h1>
-                <p><?php echo date('F Y', strtotime($month . '-01')); ?></p>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm border p-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 no-print">
-                    <h3 class="text-lg font-semibold">
-                        <i class="fas fa-coins text-emerald-500 mr-2"></i>Staff Incentive Report
-                    </h3>
-                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                        <a href="export_report.php?type=incentive&month=<?php echo $month; ?>" class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 inline-flex items-center">
-                            <i class="fas fa-file-excel mr-2"></i>Export Excel
-                        </a>
-                        <button onclick="window.print()" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 inline-flex items-center">
-                            <i class="fas fa-print mr-2"></i>Print
-                        </button>
-                        <form method="GET" class="flex items-center space-x-2 no-print">
-                            <input type="hidden" name="type" value="incentive">
-                            <input type="month" name="month" value="<?php echo $month; ?>" class="px-3 py-2 border border-gray-300 rounded-lg text-sm" onchange="this.form.submit()">
-                        </form>
-                    </div>
-                </div>
-                <div class="text-center mb-6">
-                    <p class="text-sm text-gray-500">Incentive for <?php echo date('F Y', strtotime($month . '-01')); ?></p>
-                    <p class="text-4xl font-bold text-green-600">MMK<?php echo number_format($total_incentive, 2); ?></p>
-                    <p class="text-sm text-gray-400"><?php echo count($incentive_rows); ?> completed appointment(s)</p>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="border-b">
-                                <th class="px-4 py-2 text-left">Date</th>
-                                <th class="px-4 py-2 text-left">Staff</th>
-                                <th class="px-4 py-2 text-left">Specialization</th>
-                                <th class="px-4 py-2 text-left">Service</th>
-                                <th class="px-4 py-2 text-center">Rate</th>
-                                <th class="px-4 py-2 text-left">Booking Amount</th>
-                                <th class="px-4 py-2 text-left">Incentive</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($incentive_rows as $r): ?>
-                                <tr class="border-b">
-                                    <td class="px-4 py-2"><?php echo date('M d, Y', strtotime($r['date'])); ?><br><span class="text-xs text-gray-400"><?php echo date('h:i A', strtotime($r['time'])); ?></span></td>
-                                    <td class="px-4 py-2 font-medium"><?php echo htmlspecialchars($r['staff_name']); ?></td>
-                                    <td class="px-4 py-2">
-                                        <span class="px-2 py-1 text-xs rounded-full <?php echo $r['rate'] === 0.15 ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'; ?>">
-                                            <?php echo htmlspecialchars($r['specialization']); ?>
-                                        </span>
-                                    </td>
-                                    <td class="px-4 py-2"><?php echo htmlspecialchars($r['service_name']); ?></td>
-                                    <td class="px-4 py-2 text-center font-medium"><?php echo $r['rate'] * 100; ?>%</td>
-                                    <td class="px-4 py-2 text-green-600">MMK<?php echo number_format($r['amount'], 2); ?></td>
-                                    <td class="px-4 py-2 text-green-700 font-semibold">MMK<?php echo number_format($r['incentive'], 2); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                            <tr class="font-bold border-t-2">
-                                <td colspan="5" class="px-4 py-2 text-right">Total:</td>
-                                <td class="px-4 py-2 text-green-600">MMK<?php echo number_format($total_revenue, 2); ?></td>
-                                <td class="px-4 py-2 text-green-700">MMK<?php echo number_format($total_incentive, 2); ?></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
             </div>
         </div>
     <?php endif; ?>

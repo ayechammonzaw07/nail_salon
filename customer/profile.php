@@ -133,7 +133,7 @@ require_once '../includes/header.php';
             <div class="bg-white rounded-xl shadow-sm border p-6 text-center">
                 <div class="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 <?php echo $user['image'] ? '' : 'bg-emerald-100 flex items-center justify-center'; ?>">
                     <?php if ($user['image']): ?>
-                        <img src="/nail_salon/assets/images/<?php echo htmlspecialchars($user['image']); ?>" alt="Profile" class="w-full h-full object-cover">
+                        <img src="/nail/assets/images/<?php echo htmlspecialchars($user['image']); ?>" alt="Profile" class="w-full h-full object-cover">
                     <?php else: ?>
                         <i class="fas fa-user text-emerald-500 text-3xl"></i>
                     <?php endif; ?>
@@ -158,7 +158,7 @@ require_once '../includes/header.php';
                 </div>
             </div>
 
-            <a href="/nail_salon/auth/change-password.php" class="block bg-white rounded-xl shadow-sm border p-4 hover:bg-emerald-50 transition text-center text-sm text-emerald-600 font-medium">
+            <a href="/nail/auth/change-password.php" class="block bg-white rounded-xl shadow-sm border p-4 hover:bg-emerald-50 transition text-center text-sm text-emerald-600 font-medium">
                 <i class="fas fa-key mr-2"></i>Change Password
             </a>
         </div>

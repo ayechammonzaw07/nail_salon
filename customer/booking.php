@@ -155,103 +155,227 @@ require_once '../includes/header.php';
 ?>
 </main>
 
-<section class="booking-hero">
-    <div class="container" style="max-width:860px;margin:0 auto;">
-        <div class="booking-hero-text">
-            <h1>Book Your Appointment</h1>
+<style>
+.bk{background:linear-gradient(180deg,var(--avocado-50) 0%,#f9fafb 100%);min-height:100vh;display:flex;flex-direction:column}
+
+/* Big Header */
+.bk-head{text-align:center;padding:1.8rem 1rem 0}
+.bk-head h1{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--avocado-900);margin:0 0 .3rem}
+.bk-head h1 span{color:var(--avocado-600)}
+.bk-head p{color:var(--text-light);font-size:1rem;margin:0}
+
+/* Big Progress Steps */
+.bk-progress{display:flex;align-items:center;justify-content:center;gap:0;padding:1.5rem 1rem 0;max-width:600px;margin:0 auto}
+.bk-prog-step{display:flex;align-items:center;gap:.6rem}
+.bk-prog-circle{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:800;border:3px solid var(--avocado-200);background:white;color:var(--avocado-400);transition:all .4s ease;flex-shrink:0}
+.bk-prog-step.active .bk-prog-circle{background:var(--avocado-600);border-color:var(--avocado-600);color:white;box-shadow:0 6px 20px rgba(93,132,51,.35);transform:scale(1.08)}
+.bk-prog-step.done .bk-prog-circle{background:var(--avocado-100);border-color:var(--avocado-500);color:var(--avocado-600)}
+.bk-prog-label{font-size:.9rem;font-weight:700;color:var(--avocado-400);transition:color .3s}
+.bk-prog-step.active .bk-prog-label{color:var(--avocado-800)}
+.bk-prog-step.done .bk-prog-label{color:var(--avocado-600)}
+.bk-prog-line{width:80px;height:3px;background:var(--avocado-200);margin:0 .4rem;border-radius:3px;transition:background .4s}
+.bk-prog-line.done{background:var(--avocado-500)}
+
+/* Alert */
+.bk-alert{border-radius:14px;padding:.8rem 1.1rem;margin:0 2rem 1rem;font-size:.9rem;display:flex;align-items:center;gap:.5rem}
+.bk-alert i{font-size:1.1rem;flex-shrink:0}
+.bk-alert-error{background:#fef2f2;border:1px solid #fecaca;color:#dc2626}
+.bk-alert-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#16a34a}
+
+/* Panels */
+.bk-panel{display:none;animation:bkFadeIn .4s ease}
+.bk-panel.active{display:flex;flex-direction:column;flex:1}
+@keyframes bkFadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.bk-inner{max-width:1100px;width:100%;margin:0 auto;padding:0 2rem;flex:1;display:flex;flex-direction:column}
+
+/* Step 1: full height service table */
+#step1{flex:1;display:flex;flex-direction:column}
+#step1 .bk-svc-wrap{flex:1;display:flex;flex-direction:column}
+
+/* Category pills */
+.bk-cats{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.2rem 0 1rem}
+.bk-cat{padding:.5rem 1.2rem;border-radius:50px;border:2px solid var(--avocado-200);background:white;color:var(--avocado-700);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .25s}
+.bk-cat:hover{border-color:var(--avocado-400);background:var(--avocado-50)}
+.bk-cat.on{background:var(--avocado-600);color:white;border-color:var(--avocado-600)}
+
+/* Service table */
+.bk-svc-table{width:100%;flex:1;display:flex;flex-direction:column;border:2px solid var(--avocado-100);border-radius:16px;overflow:hidden;background:white}
+.bk-svc-thead{display:grid;grid-template-columns:44px 1fr 100px 100px 110px;padding:.7rem 1rem;background:var(--avocado-50);border-bottom:2px solid var(--avocado-100)}
+.bk-svc-thead span{font-size:.72rem;font-weight:700;color:var(--avocado-700);text-transform:uppercase;letter-spacing:.5px}
+.bk-svc-tbody{flex:1;overflow-y:auto;max-height:calc(100vh - 340px)}
+.bk-svc-row{display:grid;grid-template-columns:44px 1fr 100px 100px 110px;padding:.6rem 1rem;align-items:center;border-bottom:1px solid #f3f4f6;cursor:pointer;transition:all .2s}
+.bk-svc-row:last-child{border-bottom:none}
+.bk-svc-row:hover{background:var(--avocado-50)}
+.bk-svc-row.on{background:var(--avocado-50);border-color:var(--avocado-200)}
+.bk-svc-radio{width:22px;height:22px;border-radius:50%;border:2px solid var(--avocado-300);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.bk-svc-row.on .bk-svc-radio{border-color:var(--avocado-600);background:var(--avocado-600)}
+.bk-svc-row.on .bk-svc-radio::after{content:'\f00c';font-family:'Font Awesome 6 Free';font-weight:900;font-size:.6rem;color:white}
+.bk-svc-name{font-weight:600;color:var(--dark);font-size:.9rem}
+.bk-svc-name small{display:block;font-weight:400;color:var(--text-light);font-size:.72rem;margin-top:.1rem}
+.bk-svc-price{font-weight:700;color:var(--avocado-600);font-size:.9rem}
+.bk-svc-dur{font-size:.8rem;color:var(--text-light);display:flex;align-items:center;gap:.3rem}
+.bk-svc-dur i{color:var(--avocado-500)}
+.bk-svc-select{background:var(--avocado-600);color:white;border:none;padding:.45rem 1rem;border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center}
+.bk-svc-select:hover{background:var(--avocado-700)}
+.bk-svc-row.on .bk-svc-select{background:var(--avocado-100);color:var(--avocado-700)}
+
+.bk-actions{display:flex;justify-content:space-between;align-items:center;padding:1rem 0}
+.bk-btn{padding:.7rem 1.8rem;border-radius:12px;font-weight:700;font-size:.95rem;cursor:pointer;transition:all .3s;border:none;display:inline-flex;align-items:center;gap:.5rem;font-family:'Inter',sans-serif}
+.bk-btn-next{background:linear-gradient(135deg,var(--avocado-500),var(--avocado-600));color:white;box-shadow:0 4px 16px rgba(93,132,51,.25)}
+.bk-btn-next:hover{background:linear-gradient(135deg,var(--avocado-600),var(--avocado-700));transform:translateY(-2px);box-shadow:0 8px 24px rgba(93,132,51,.3)}
+.bk-btn-back{background:white;color:var(--avocado-700);border:2px solid var(--avocado-200)}
+.bk-btn-back:hover{background:var(--avocado-50);border-color:var(--avocado-400)}
+.bk-btn-confirm{background:linear-gradient(135deg,var(--avocado-500),var(--avocado-600));color:white;font-size:1rem;padding:.8rem 2.5rem;box-shadow:0 4px 16px rgba(93,132,51,.25)}
+.bk-btn-confirm:hover{background:linear-gradient(135deg,var(--avocado-600),var(--avocado-700));transform:translateY(-2px);box-shadow:0 8px 24px rgba(93,132,51,.3)}
+
+/* Step 2 */
+.bk-card2{background:white;border-radius:20px;padding:2rem;box-shadow:0 2px 20px rgba(0,0,0,.04);margin-top:1rem}
+.bk-card2-title{margin-bottom:1.5rem}
+.bk-card2-title h2{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--avocado-900);margin:0 0 .25rem}
+.bk-card2-title p{color:var(--text-light);font-size:.9rem;margin:0}
+
+.bk-field-row{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem}
+.bk-field label{display:block;font-weight:700;color:var(--dark);margin-bottom:.4rem;font-size:.9rem}
+.bk-field label .bk-opt{font-weight:400;color:var(--text-light);font-size:.8rem}
+.bk-input{width:100%;padding:.75rem 1rem;border:2px solid var(--avocado-100);border-radius:12px;font-size:.9rem;outline:none;transition:border-color .3s;font-family:'Inter',sans-serif;background:white}
+.bk-input:focus{border-color:var(--avocado-400)}
+textarea.bk-input{resize:vertical;min-height:70px}
+
+.bk-avail{padding:.8rem 1.2rem;border-radius:12px;font-size:.88rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:.6rem}
+.bk-avail i{font-size:1.1rem;flex-shrink:0}
+.bk-avail-ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
+.bk-avail-warn{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+.bk-avail-bad{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
+
+.bk-staff-label{font-weight:700;color:var(--dark);font-size:.9rem;margin-bottom:.7rem}
+.bk-staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.9rem;margin-bottom:1.2rem}
+.bk-staff{border:2px solid var(--avocado-100);border-radius:16px;cursor:pointer;transition:all .3s;text-align:center;position:relative;overflow:hidden}
+.bk-staff:hover{border-color:var(--avocado-300);box-shadow:0 4px 14px rgba(61,79,42,.07)}
+.bk-staff.on{border-color:var(--avocado-500);background:var(--avocado-50);box-shadow:0 0 0 3px rgba(124,179,66,.15)}
+.bk-staff.on::after{content:'\f00c';font-family:'Font Awesome 6 Free';font-weight:900;position:absolute;top:.5rem;right:.5rem;width:24px;height:24px;background:var(--avocado-600);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;z-index:1}
+.bk-staff-inner{padding:1.2rem .8rem}
+.bk-staff-avatar{width:60px;height:60px;border-radius:50%;background:var(--avocado-100);margin:0 auto .6rem;display:flex;align-items:center;justify-content:center;overflow:hidden;border:3px solid var(--avocado-200);transition:border-color .3s}
+.bk-staff.on .bk-staff-avatar{border-color:var(--avocado-500)}
+.bk-staff-avatar img{width:100%;height:100%;object-fit:cover}
+.bk-staff-avatar i{color:var(--avocado-500);font-size:1.3rem}
+.bk-staff h4{font-weight:700;color:var(--dark);margin:0 0 .15rem;font-size:.9rem}
+.bk-staff p{font-size:.75rem;color:var(--text-light);margin:0 0 .35rem}
+.bk-staff-hours{font-size:.7rem;color:var(--avocado-500);display:flex;align-items:center;justify-content:center;gap:.25rem}
+
+/* Step 3 */
+.bk-confirm{background:linear-gradient(135deg,var(--avocado-50),#f4fae6);border-radius:18px;padding:1.8rem;margin:1rem 0;border:1px solid var(--avocado-200)}
+.bk-confirm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+.bk-confirm-item{background:white;border-radius:14px;padding:1rem 1.2rem}
+.bk-confirm-label{font-size:.72rem;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:.25rem}
+.bk-confirm-val{font-weight:700;color:var(--dark);font-size:1rem}
+.bk-confirm-val.bk-price{color:var(--avocado-600);font-size:1.2rem;font-weight:800}
+.bk-confirm-note{background:white;border:1px solid #fde68a;border-radius:12px;padding:.8rem 1.2rem;font-size:.88rem;color:#92400e;display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
+.bk-confirm-note i{flex-shrink:0}
+
+@media(max-width:768px){
+    .bk-head h1{font-size:1.6rem}
+    .bk-inner{padding:0 1rem}
+    .bk-prog-circle{width:40px;height:40px;font-size:.9rem}
+    .bk-prog-label{font-size:.78rem}
+    .bk-prog-line{width:40px}
+    .bk-svc-thead{grid-template-columns:36px 1fr 80px 70px;display:none}
+    .bk-svc-row{grid-template-columns:36px 1fr auto;gap:.5rem;padding:.8rem 1rem}
+    .bk-svc-dur,.bk-svc-select{display:none}
+    .bk-field-row{grid-template-columns:1fr}
+    .bk-staff-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+    .bk-confirm-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+
+<section class="bk">
+    <div class="bk-inner">
+        <div class="bk-head">
+            <h1>Book Your <span>Appointment</span></h1>
             <p>Select a service, pick your preferred date and time, and we'll handle the rest.</p>
         </div>
 
-        <div class="booking-steps-indicator">
-            <div id="step1Dot" class="bstep active">
-                <span class="bstep-num">1</span>
-                <span class="bstep-label">Service</span>
+        <div class="bk-progress">
+            <div class="bk-prog-step active" id="progStep1">
+                <div class="bk-prog-circle">1</div>
+                <span class="bk-prog-label">Choose Service</span>
             </div>
-            <div class="bstep-arrow"><i class="fas fa-chevron-right"></i></div>
-            <div id="step2Dot" class="bstep">
-                <span class="bstep-num">2</span>
-                <span class="bstep-label">Schedule</span>
+            <div class="bk-prog-line" id="progLine1"></div>
+            <div class="bk-prog-step" id="progStep2">
+                <div class="bk-prog-circle">2</div>
+                <span class="bk-prog-label">Schedule</span>
             </div>
-            <div class="bstep-arrow"><i class="fas fa-chevron-right"></i></div>
-            <div id="step3Dot" class="bstep">
-                <span class="bstep-num">3</span>
-                <span class="bstep-label">Confirm</span>
+            <div class="bk-prog-line" id="progLine2"></div>
+            <div class="bk-prog-step" id="progStep3">
+                <div class="bk-prog-circle">3</div>
+                <span class="bk-prog-label">Confirm</span>
             </div>
         </div>
 
         <?php if ($error): ?>
-            <div class="booking-alert booking-alert-error">
-                <i class="fas fa-exclamation-circle"></i> <?php echo $error; ?>
-            </div>
+            <div class="bk-alert bk-alert-error"><i class="fas fa-exclamation-circle"></i> <?php echo $error; ?></div>
         <?php endif; ?>
         <?php if ($success): ?>
-            <div class="booking-alert booking-alert-success">
-                <i class="fas fa-check-circle"></i> <?php echo $success; ?>
-            </div>
+            <div class="bk-alert bk-alert-success"><i class="fas fa-check-circle"></i> <?php echo $success; ?></div>
         <?php endif; ?>
 
-        <form method="POST" id="bookingForm">
+        <form method="POST" id="bookingForm" style="flex:1;display:flex;flex-direction:column">
 
-            <!-- STEP 1: Service -->
-            <div id="step1" class="booking-panel active">
-                <div class="booking-card">
-                    <div class="booking-card-header">
-                        <h2>Choose a Service</h2>
-                        <p>What treatment would you like today?</p>
-                    </div>
-
-                    <div class="booking-categories">
-                        <button type="button" class="cat-pill active" onclick="filterCategory('all', this)">All</button>
+            <!-- STEP 1: Service Table -->
+            <div id="step1" class="bk-panel active">
+                <div class="bk-svc-wrap">
+                    <div class="bk-cats">
+                        <button type="button" class="bk-cat on" onclick="bkFilterCat('all',this)">All Services</button>
                         <?php foreach ($categories as $cat): ?>
-                        <button type="button" class="cat-pill" onclick="filterCategory('<?php echo htmlspecialchars($cat['name']); ?>', this)"><?php echo htmlspecialchars($cat['name']); ?></button>
+                        <button type="button" class="bk-cat" onclick="bkFilterCat('<?php echo htmlspecialchars($cat['name']); ?>',this)"><?php echo htmlspecialchars($cat['name']); ?></button>
                         <?php endforeach; ?>
                     </div>
 
-                    <div id="serviceList" class="booking-service-grid">
-                        <?php foreach ($services as $svc): ?>
-                        <label class="service-card-select <?php echo $selected_service == $svc['id'] ? 'selected' : ''; ?>" data-category="<?php echo htmlspecialchars($svc['category_name']); ?>">
-                            <input type="radio" name="service_id" value="<?php echo $svc['id']; ?>" style="display:none;" data-duration="<?php echo $svc['duration']; ?>" data-price="<?php echo $svc['price']; ?>" <?php echo $selected_service == $svc['id'] ? 'checked' : ''; ?> onchange="selectService(this)">
-                            <div class="service-card-select-inner">
-                                <div class="service-card-select-top">
-                                    <div class="service-card-select-icon">
-                                        <i class="fas fa-hand-sparkles"></i>
-                                    </div>
-                                    <span class="service-card-select-badge"><?php echo htmlspecialchars($svc['category_name']); ?></span>
-                                </div>
-                                <h3><?php echo htmlspecialchars($svc['name']); ?></h3>
-                                <p class="service-card-select-desc"><?php echo htmlspecialchars($svc['description'] ?? ''); ?></p>
-                                <div class="service-card-select-footer">
-                                    <span class="service-card-select-price">MMK<?php echo number_format($svc['price'], 2); ?></span>
-                                    <span class="service-card-select-dur"><i class="fas fa-clock"></i> <?php echo $svc['duration']; ?> min</span>
-                                </div>
-                            </div>
-                        </label>
-                        <?php endforeach; ?>
+                    <div class="bk-svc-table">
+                        <div class="bk-svc-thead">
+                            <span></span>
+                            <span>Service</span>
+                            <span>Category</span>
+                            <span>Duration</span>
+                            <span style="text-align:right">Price</span>
+                        </div>
+                        <div id="serviceList" class="bk-svc-tbody">
+                            <?php foreach ($services as $svc): ?>
+                            <label class="bk-svc-row <?php echo $selected_service == $svc['id'] ? 'on' : ''; ?>" data-cat="<?php echo htmlspecialchars($svc['category_name']); ?>">
+                                <input type="radio" name="service_id" value="<?php echo $svc['id']; ?>" style="display:none;" data-duration="<?php echo $svc['duration']; ?>" data-price="<?php echo $svc['price']; ?>" data-name="<?php echo htmlspecialchars($svc['name']); ?>" <?php echo $selected_service == $svc['id'] ? 'checked' : ''; ?> onchange="bkSelectSvc(this)">
+                                <div class="bk-svc-radio"></div>
+                                <div class="bk-svc-name"><?php echo htmlspecialchars($svc['name']); ?><?php if (!empty($svc['description'])): ?><small><?php echo htmlspecialchars(mb_strimwidth($svc['description'],0,60,'...')); ?></small><?php endif; ?></div>
+                                <div style="font-size:.78rem;color:var(--text-light)"><?php echo htmlspecialchars($svc['category_name']); ?></div>
+                                <div class="bk-svc-dur"><i class="fas fa-clock"></i> <?php echo $svc['duration']; ?> min</div>
+                                <div class="bk-svc-price" style="text-align:right">MMK<?php echo number_format($svc['price'], 0); ?></div>
+                            </label>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
 
-                    <div class="booking-card-actions">
+                    <div class="bk-actions">
                         <div></div>
-                        <button type="button" class="bbtn bbtn-next" onclick="goToStep(2)">Next <i class="fas fa-arrow-right"></i></button>
+                        <button type="button" class="bk-btn bk-btn-next" onclick="bkGo(2)">Continue <i class="fas fa-arrow-right"></i></button>
                     </div>
                 </div>
             </div>
 
             <!-- STEP 2: Schedule -->
-            <div id="step2" class="booking-panel">
-                <div class="booking-card">
-                    <div class="booking-card-header">
+            <div id="step2" class="bk-panel">
+                <div class="bk-card2">
+                    <div class="bk-card2-title">
                         <h2>Pick Date, Time & Staff</h2>
                         <p>Choose when you'd like to come in and who you'd like to see.</p>
                     </div>
 
-                    <div class="schedule-row">
-                        <div class="schedule-field">
-                            <label>Date</label>
-                            <input type="date" name="appointment_date" id="bookingDate" min="<?php echo date('Y-m-d'); ?>" required onchange="onScheduleChange()" class="binput">
+                    <div class="bk-field-row">
+                        <div class="bk-field">
+                            <label><i class="fas fa-calendar-alt" style="color:var(--avocado-500);margin-right:.3rem"></i> Date</label>
+                            <input type="date" name="appointment_date" id="bookingDate" min="<?php echo date('Y-m-d'); ?>" required onchange="bkOnSchedule()" class="bk-input">
                         </div>
-                        <div class="schedule-field">
-                            <label>Time</label>
-                            <select name="appointment_time" id="bookingTime" required onchange="onScheduleChange()" class="binput">
+                        <div class="bk-field">
+                            <label><i class="fas fa-clock" style="color:var(--avocado-500);margin-right:.3rem"></i> Time</label>
+                            <select name="appointment_time" id="bookingTime" required onchange="bkOnSchedule()" class="bk-input">
                                 <option value="">Select time</option>
                                 <?php for ($h = 9; $h <= 17; $h++): ?>
                                     <option value="<?php echo sprintf('%02d', $h); ?>:00:00"><?php echo date('h:i A', strtotime(sprintf('%02d:00', $h))); ?></option>
@@ -263,87 +387,85 @@ require_once '../includes/header.php';
                         </div>
                     </div>
 
-                    <div id="availabilityNotice" class="availability-notice" style="display:none;"></div>
+                    <div id="availNotice" class="bk-avail" style="display:none;"></div>
 
-                    <div class="schedule-staff-section">
-                        <label class="schedule-staff-label">Staff Member</label>
-                        <div id="staffList" class="booking-staff-grid">
-                            <?php foreach ($staff_members as $s): ?>
-                            <label class="staff-card-select">
-                                <input type="radio" name="staff_id" value="<?php echo $s['id']; ?>" style="display:none;" data-hours-start="<?php echo $s['working_hours_start']; ?>" data-hours-end="<?php echo $s['working_hours_end']; ?>" onchange="selectStaff(this)">
-                                <div class="staff-card-select-inner">
-                                    <div class="staff-card-select-avatar">
-                                        <?php if ($s['photo']): ?>
-                                        <img src="/nail/assets/uploads/<?php echo htmlspecialchars($s['photo']); ?>" alt="<?php echo htmlspecialchars($s['name']); ?>">
-                                        <?php else: ?>
-                                        <i class="fas fa-user"></i>
-                                        <?php endif; ?>
-                                    </div>
-                                    <h4><?php echo htmlspecialchars($s['name']); ?></h4>
-                                    <p><?php echo htmlspecialchars($s['specialization'] ?? 'Nail Artist'); ?></p>
-                                    <span class="staff-card-select-hours"><i class="fas fa-clock"></i> <?php echo date('h:i A', strtotime($s['working_hours_start'])); ?> - <?php echo date('h:i A', strtotime($s['working_hours_end'])); ?></span>
+                    <div class="bk-staff-label"><i class="fas fa-users" style="color:var(--avocado-500);margin-right:.3rem"></i> Staff Member</div>
+                    <div id="staffList" class="bk-staff-grid">
+                        <?php foreach ($staff_members as $s): ?>
+                        <label class="bk-staff">
+                            <input type="radio" name="staff_id" value="<?php echo $s['id']; ?>" style="display:none;" data-hours-start="<?php echo $s['working_hours_start']; ?>" data-hours-end="<?php echo $s['working_hours_end']; ?>" onchange="bkSelectStaff(this)">
+                            <div class="bk-staff-inner">
+                                <div class="bk-staff-avatar">
+                                    <?php if ($s['photo']): ?>
+                                    <img src="/nail/assets/uploads/<?php echo htmlspecialchars($s['photo']); ?>" alt="<?php echo htmlspecialchars($s['name']); ?>">
+                                    <?php else: ?>
+                                    <i class="fas fa-user"></i>
+                                    <?php endif; ?>
                                 </div>
-                            </label>
-                            <?php endforeach; ?>
-                        </div>
+                                <h4><?php echo htmlspecialchars($s['name']); ?></h4>
+                                <p><?php echo htmlspecialchars($s['specialization'] ?? 'Nail Artist'); ?></p>
+                                <span class="bk-staff-hours"><i class="fas fa-clock"></i> <?php echo date('h:i A', strtotime($s['working_hours_start'])); ?> - <?php echo date('h:i A', strtotime($s['working_hours_end'])); ?></span>
+                            </div>
+                        </label>
+                        <?php endforeach; ?>
                     </div>
 
-                    <div class="booking-field">
-                        <label>Notes <span class="optional">(Optional)</span></label>
-                        <textarea name="notes" rows="2" placeholder="Any special requests or preferences..." class="binput btextarea"></textarea>
+                    <div class="bk-field">
+                        <label>Notes <span class="bk-opt">(Optional)</span></label>
+                        <textarea name="notes" rows="2" placeholder="Any special requests or preferences..." class="bk-input"></textarea>
                     </div>
 
-                    <div class="booking-card-actions">
-                        <button type="button" class="bbtn bbtn-back" onclick="goToStep(1)"><i class="fas fa-arrow-left"></i> Back</button>
-                        <button type="button" class="bbtn bbtn-next" onclick="goToStep(3)">Next <i class="fas fa-arrow-right"></i></button>
+                    <div class="bk-actions">
+                        <button type="button" class="bk-btn bk-btn-back" onclick="bkGo(1)"><i class="fas fa-arrow-left"></i> Back</button>
+                        <button type="button" class="bk-btn bk-btn-next" onclick="bkGo(3)">Continue <i class="fas fa-arrow-right"></i></button>
                     </div>
                 </div>
             </div>
 
             <!-- STEP 3: Confirm -->
-            <div id="step3" class="booking-panel">
-                <div class="booking-card">
-                    <div class="booking-card-header">
+            <div id="step3" class="bk-panel">
+                <div class="bk-card2">
+                    <div class="bk-card2-title">
                         <h2>Confirm Your Booking</h2>
                         <p>Review your details before confirming.</p>
                     </div>
 
-                    <div class="confirm-summary">
-                        <div class="confirm-row">
-                            <div class="confirm-item">
-                                <span class="confirm-label">Service</span>
-                                <span class="confirm-value" id="summaryService"></span>
+                    <div class="bk-confirm">
+                        <div class="bk-confirm-grid">
+                            <div class="bk-confirm-item">
+                                <div class="bk-confirm-label"><i class="fas fa-hand-sparkles" style="margin-right:.3rem"></i>Service</div>
+                                <div class="bk-confirm-val" id="sumSvc"></div>
                             </div>
-                            <div class="confirm-item">
-                                <span class="confirm-label">Staff</span>
-                                <span class="confirm-value" id="summaryStaff"></span>
+                            <div class="bk-confirm-item">
+                                <div class="bk-confirm-label"><i class="fas fa-user" style="margin-right:.3rem"></i>Staff</div>
+                                <div class="bk-confirm-val" id="sumStaff"></div>
                             </div>
-                            <div class="confirm-item">
-                                <span class="confirm-label">Date</span>
-                                <span class="confirm-value" id="summaryDate"></span>
+                            <div class="bk-confirm-item">
+                                <div class="bk-confirm-label"><i class="fas fa-calendar" style="margin-right:.3rem"></i>Date</div>
+                                <div class="bk-confirm-val" id="sumDate"></div>
                             </div>
-                            <div class="confirm-item">
-                                <span class="confirm-label">Time</span>
-                                <span class="confirm-value" id="summaryTime"></span>
+                            <div class="bk-confirm-item">
+                                <div class="bk-confirm-label"><i class="fas fa-clock" style="margin-right:.3rem"></i>Time</div>
+                                <div class="bk-confirm-val" id="sumTime"></div>
                             </div>
-                            <div class="confirm-item">
-                                <span class="confirm-label">Duration</span>
-                                <span class="confirm-value" id="summaryDuration"></span>
+                            <div class="bk-confirm-item">
+                                <div class="bk-confirm-label"><i class="fas fa-hourglass-half" style="margin-right:.3rem"></i>Duration</div>
+                                <div class="bk-confirm-val" id="sumDur"></div>
                             </div>
-                            <div class="confirm-item">
-                                <span class="confirm-label">Price</span>
-                                <span class="confirm-value confirm-price" id="summaryPrice"></span>
+                            <div class="bk-confirm-item">
+                                <div class="bk-confirm-label"><i class="fas fa-tag" style="margin-right:.3rem"></i>Total Price</div>
+                                <div class="bk-confirm-val bk-price" id="sumPrice"></div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="confirm-info">
+                    <div class="bk-confirm-note">
                         <i class="fas fa-info-circle"></i> Your appointment will be submitted as <strong>pending</strong>. We will confirm it shortly. Seat will be auto-assigned for you.
                     </div>
 
-                    <div class="booking-card-actions">
-                        <button type="button" class="bbtn bbtn-back" onclick="goToStep(2)"><i class="fas fa-arrow-left"></i> Back</button>
-                        <button type="submit" class="bbtn bbtn-confirm"><i class="fas fa-calendar-check"></i> Confirm Booking</button>
+                    <div class="bk-actions">
+                        <button type="button" class="bk-btn bk-btn-back" onclick="bkGo(2)"><i class="fas fa-arrow-left"></i> Back</button>
+                        <button type="submit" class="bk-btn bk-btn-confirm"><i class="fas fa-calendar-check"></i> Confirm Booking</button>
                     </div>
                 </div>
             </div>
@@ -352,290 +474,121 @@ require_once '../includes/header.php';
     </div>
 </section>
 
-<style>
-.booking-hero {
-    padding: 1.5rem 1.5rem 3rem;
-    background: linear-gradient(135deg, var(--avocado-50), white);
-}
-.booking-hero-text { text-align: center; margin-bottom: 1.8rem; }
-.booking-hero-text h1 { font-family:'Playfair Display',serif; font-size:1.9rem; color:var(--avocado-900); margin:0 0 0.4rem; }
-.booking-hero-text p { color:var(--text-light); font-size:0.9rem; margin:0; }
-
-/* Step indicator */
-.booking-steps-indicator { display:flex; justify-content:center; align-items:center; gap:0.4rem; margin-bottom:1.8rem; }
-.bstep { display:flex; align-items:center; gap:0.35rem; padding:0.35rem 0.75rem; border-radius:20px; background:white; border:2px solid var(--avocado-100); transition:all 0.3s; cursor:default; }
-.bstep.active { background:var(--avocado-600); border-color:var(--avocado-600); }
-.bstep.done { background:var(--avocado-100); border-color:var(--avocado-200); color:var(--avocado-700); }
-.bstep-num { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:700; background:var(--avocado-200); color:var(--avocado-800); }
-.bstep.active .bstep-num { background:rgba(255,255,255,0.3); color:white; }
-.bstep.done .bstep-num { background:var(--avocado-600); color:white; }
-.bstep-label { font-size:0.75rem; font-weight:500; }
-.bstep.active .bstep-label { color:white; }
-.bstep-arrow { color:var(--avocado-300); font-size:0.7rem; }
-
-/* Panels */
-.booking-panel { display:none; }
-.booking-panel.active { display:block; }
-
-/* Card */
-.booking-card { background:white; border-radius:20px; padding:1.8rem; box-shadow:0 2px 20px rgba(0,0,0,0.05); }
-.booking-card-header { margin-bottom:1.5rem; }
-.booking-card-header h2 { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--avocado-900); margin:0 0 0.25rem; }
-.booking-card-header p { color:var(--text-light); font-size:0.82rem; margin:0; }
-
-/* Alerts */
-.booking-alert { border-radius:12px; padding:0.75rem 1rem; margin-bottom:1.5rem; font-size:0.85rem; }
-.booking-alert i { margin-right:0.4rem; }
-.booking-alert-error { background:#fef2f2; border:1px solid #fecaca; color:#dc2626; }
-.booking-alert-success { background:#f0fdf4; border:1px solid #bbf7d0; color:#16a34a; }
-
-/* Category pills */
-.booking-categories { display:flex; flex-wrap:wrap; gap:0.4rem; margin-bottom:1.2rem; }
-.cat-pill { padding:0.35rem 0.9rem; border-radius:20px; border:1px solid var(--avocado-200); background:white; color:var(--avocado-700); font-size:0.78rem; font-weight:500; cursor:pointer; transition:all 0.2s; }
-.cat-pill:hover { background:var(--avocado-50); }
-.cat-pill.active { background:var(--avocado-600); color:white; border-color:var(--avocado-600); }
-
-/* Service cards */
-.booking-service-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:0.9rem; }
-.service-card-select { border:2px solid var(--avocado-100); border-radius:14px; cursor:pointer; transition:all 0.3s; display:block; }
-.service-card-select:hover { border-color:var(--avocado-300); box-shadow:0 2px 12px rgba(0,0,0,0.06); }
-.service-card-select.selected { border-color:var(--avocado-500); background:var(--avocado-50); box-shadow:0 0 0 3px rgba(124,179,66,0.15); }
-.service-card-select-inner { padding:1rem; }
-.service-card-select-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.5rem; }
-.service-card-select-icon { width:36px; height:36px; background:var(--avocado-100); border-radius:10px; display:flex; align-items:center; justify-content:center; }
-.service-card-select-icon i { color:var(--avocado-600); font-size:0.85rem; }
-.service-card-select-badge { font-size:0.65rem; padding:0.15rem 0.5rem; background:var(--avocado-50); color:var(--avocado-600); border-radius:20px; font-weight:500; }
-.service-card-select h3 { font-weight:600; color:var(--dark); margin:0.3rem 0 0.2rem; font-size:0.9rem; }
-.service-card-select-desc { font-size:0.75rem; color:var(--text-light); margin:0 0 0.7rem; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-.service-card-select-footer { display:flex; justify-content:space-between; align-items:center; padding-top:0.7rem; border-top:1px solid var(--avocado-100); }
-.service-card-select-price { font-weight:700; color:var(--avocado-600); font-size:0.85rem; }
-.service-card-select-dur { font-size:0.72rem; color:var(--text-light); }
-.service-card-select-dur i { margin-right:0.2rem; }
-
-/* Schedule */
-.schedule-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.2rem; }
-.schedule-field label, .booking-field label, .schedule-staff-label { display:block; font-weight:600; color:var(--dark); margin-bottom:0.4rem; font-size:0.85rem; }
-.schedule-staff-label { margin-bottom:0.6rem; }
-
-.binput { width:100%; padding:0.7rem 0.9rem; border:2px solid var(--avocado-100); border-radius:10px; font-size:0.85rem; outline:none; transition:border-color 0.3s; font-family:'Inter',sans-serif; background:white; }
-.binput:focus { border-color:var(--avocado-400); }
-.btextarea { resize:vertical; min-height:60px; }
-.booking-field { margin-bottom:0.5rem; }
-.optional { font-weight:400; color:var(--text-light); font-size:0.78rem; }
-
-/* Staff grid */
-.booking-staff-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:0.8rem; }
-.staff-card-select { border:2px solid var(--avocado-100); border-radius:14px; cursor:pointer; transition:all 0.3s; display:block; text-align:center; }
-.staff-card-select:hover { border-color:var(--avocado-300); box-shadow:0 2px 10px rgba(0,0,0,0.05); }
-.staff-card-select.selected { border-color:var(--avocado-500); background:var(--avocado-50); box-shadow:0 0 0 3px rgba(124,179,66,0.15); }
-.staff-card-select-inner { padding:1rem 0.8rem; }
-.staff-card-select-avatar { width:52px; height:52px; border-radius:50%; background:var(--avocado-100); margin:0 auto 0.6rem; display:flex; align-items:center; justify-content:center; overflow:hidden; border:2px solid var(--avocado-200); }
-.staff-card-select-avatar img { width:100%; height:100%; object-fit:cover; }
-.staff-card-select-avatar i { color:var(--avocado-500); font-size:1.1rem; }
-.staff-card-select h4 { font-weight:600; color:var(--dark); margin:0 0 0.15rem; font-size:0.82rem; }
-.staff-card-select p { font-size:0.7rem; color:var(--text-light); margin:0 0 0.4rem; }
-.staff-card-select-hours { font-size:0.65rem; color:var(--avocado-500); }
-.staff-card-select-hours i { margin-right:0.2rem; }
-
-/* Availability notice */
-.availability-notice { padding:0.7rem 1rem; border-radius:10px; font-size:0.82rem; margin-bottom:1rem; display:flex; align-items:center; gap:0.6rem; }
-.availability-notice i { font-size:1rem; flex-shrink:0; }
-.avail-ok { background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; }
-.avail-warn { background:#fffbeb; border:1px solid #fde68a; color:#92400e; }
-.avail-bad { background:#fef2f2; border:1px solid #fecaca; color:#991b1b; }
-
-/* Confirm summary */
-.confirm-summary { background:var(--avocado-50); border-radius:14px; padding:1.2rem; margin-bottom:1rem; }
-.confirm-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:1rem; }
-.confirm-label { display:block; font-size:0.65rem; color:var(--text-light); text-transform:uppercase; font-weight:600; letter-spacing:0.5px; margin-bottom:0.15rem; }
-.confirm-value { display:block; font-weight:600; color:var(--dark); font-size:0.88rem; }
-.confirm-price { color:var(--avocado-600) !important; font-size:1rem !important; font-weight:700 !important; }
-.confirm-info { background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:0.7rem 1rem; font-size:0.82rem; color:#92400e; margin-bottom:0.5rem; }
-.confirm-info i { margin-right:0.3rem; }
-
-/* Buttons */
-.booking-card-actions { display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem; padding-top:1rem; border-top:1px solid #f3f4f6; }
-.bbtn { padding:0.6rem 1.3rem; border-radius:10px; font-weight:600; font-size:0.85rem; cursor:pointer; transition:all 0.3s; border:none; display:inline-flex; align-items:center; gap:0.4rem; font-family:'Inter',sans-serif; }
-.bbtn-next { background:var(--avocado-600); color:white; }
-.bbtn-next:hover { background:var(--avocado-700); }
-.bbtn-back { background:white; color:var(--avocado-700); border:2px solid var(--avocado-200); }
-.bbtn-back:hover { background:var(--avocado-50); }
-.bbtn-confirm { background:var(--avocado-600); color:white; font-size:0.92rem; padding:0.7rem 1.8rem; }
-.bbtn-confirm:hover { background:var(--avocado-700); }
-
-/* Responsive */
-@media (max-width:640px) {
-    .booking-hero { padding:1rem 1rem 2rem; }
-    .booking-hero-text h1 { font-size:1.4rem; }
-    .booking-card { padding:1.2rem; }
-    .booking-service-grid { grid-template-columns:1fr; }
-    .schedule-row { grid-template-columns:1fr; }
-    .booking-staff-grid { grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); }
-    .confirm-row { grid-template-columns:1fr 1fr; }
-    .bstep-label { display:none; }
-}
-</style>
-
 <script>
-var currentStep = 1;
-var totalSteps = 3;
+var bkStep = 1;
 
-function goToStep(step) {
-    if (step > currentStep) {
-        if (currentStep === 1 && !document.querySelector('input[name="service_id"]:checked')) {
+function bkGo(step) {
+    if (step > bkStep) {
+        if (bkStep === 1 && !document.querySelector('input[name="service_id"]:checked')) {
             Swal.fire({icon:'warning',title:'Select a Service',text:'Please choose a service to continue.',confirmButtonColor:'#7cb342'});
             return;
         }
-        if (currentStep === 2) {
-            var date = document.querySelector('[name="appointment_date"]').value;
-            var time = document.querySelector('[name="appointment_time"]').value;
-            var staff = document.querySelector('input[name="staff_id"]:checked');
-            if (!date || !time) {
-                Swal.fire({icon:'warning',title:'Select Date & Time',text:'Please choose both date and time to continue.',confirmButtonColor:'#7cb342'});
-                return;
-            }
-            if (!staff) {
-                Swal.fire({icon:'warning',title:'Select Staff',text:'Please choose a staff member to continue.',confirmButtonColor:'#7cb342'});
-                return;
-            }
-            updateSummary();
+        if (bkStep === 2) {
+            var d = document.querySelector('[name="appointment_date"]').value;
+            var t = document.querySelector('[name="appointment_time"]').value;
+            var st = document.querySelector('input[name="staff_id"]:checked');
+            if (!d || !t) { Swal.fire({icon:'warning',title:'Select Date & Time',text:'Please choose both date and time.',confirmButtonColor:'#7cb342'}); return; }
+            if (!st) { Swal.fire({icon:'warning',title:'Select Staff',text:'Please choose a staff member.',confirmButtonColor:'#7cb342'}); return; }
+            bkUpdateSummary();
         }
     }
-    document.querySelectorAll('.booking-panel').forEach(function(p) { p.classList.remove('active'); });
-    document.getElementById('step' + step).classList.add('active');
-    for (var i = 1; i <= totalSteps; i++) {
-        var dot = document.getElementById('step' + i + 'Dot');
-        dot.classList.remove('active', 'done');
-        if (i === step) dot.classList.add('active');
-        else if (i < step) dot.classList.add('done');
+    document.querySelectorAll('.bk-panel').forEach(function(p){p.classList.remove('active')});
+    document.getElementById('step'+step).classList.add('active');
+    for (var i = 1; i <= 3; i++) {
+        var ps = document.getElementById('progStep'+i);
+        ps.classList.remove('active','done');
+        if (i === step) ps.classList.add('active');
+        else if (i < step) ps.classList.add('done');
     }
-    currentStep = step;
-    window.scrollTo({top: 0, behavior: 'smooth'});
+    for (var i = 1; i <= 2; i++) {
+        var ln = document.getElementById('progLine'+i);
+        ln.classList.toggle('done', i < step);
+    }
+    bkStep = step;
+    window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function filterCategory(cat, btn) {
-    document.querySelectorAll('.cat-pill').forEach(function(t) { t.classList.remove('active'); });
-    btn.classList.add('active');
-    document.querySelectorAll('.service-card-select').forEach(function(opt) {
-        opt.style.display = (cat === 'all' || opt.dataset.category === cat) ? '' : 'none';
+function bkFilterCat(cat, btn) {
+    document.querySelectorAll('.bk-cat').forEach(function(b){b.classList.remove('on')});
+    btn.classList.add('on');
+    document.querySelectorAll('.bk-svc-row').forEach(function(c){
+        c.style.display = (cat==='all' || c.dataset.cat===cat) ? '' : 'none';
     });
 }
 
-function selectService(radio) {
-    document.querySelectorAll('.service-card-select').forEach(function(o) { o.classList.remove('selected'); });
-    radio.closest('.service-card-select').classList.add('selected');
+function bkSelectSvc(r) {
+    document.querySelectorAll('.bk-svc-row').forEach(function(c){c.classList.remove('on')});
+    r.closest('.bk-svc-row').classList.add('on');
 }
 
-function selectStaff(radio) {
-    document.querySelectorAll('.staff-card-select').forEach(function(o) { o.classList.remove('selected'); });
-    radio.closest('.staff-card-select').classList.add('selected');
+function bkSelectStaff(r) {
+    document.querySelectorAll('.bk-staff').forEach(function(c){c.classList.remove('on')});
+    r.closest('.bk-staff').classList.add('on');
 }
 
-function updateSummary() {
+function bkUpdateSummary() {
     var svc = document.querySelector('input[name="service_id"]:checked');
     var stf = document.querySelector('input[name="staff_id"]:checked');
     var date = document.querySelector('[name="appointment_date"]').value;
     var time = document.querySelector('[name="appointment_time"]').value;
-
     if (svc) {
-        var card = svc.closest('.service-card-select');
-        document.getElementById('summaryService').textContent = card.querySelector('h3').textContent;
-        document.getElementById('summaryPrice').textContent = 'MMK' + parseFloat(svc.dataset.price).toLocaleString('en',{minimumFractionDigits:2});
-        document.getElementById('summaryDuration').textContent = svc.dataset.duration + ' minutes';
+        document.getElementById('sumSvc').textContent = svc.dataset.name;
+        document.getElementById('sumPrice').textContent = 'MMK' + parseFloat(svc.dataset.price).toLocaleString('en',{minimumFractionDigits:2});
+        document.getElementById('sumDur').textContent = svc.dataset.duration + ' minutes';
     }
     if (stf) {
-        var card = stf.closest('.staff-card-select');
-        document.getElementById('summaryStaff').textContent = card.querySelector('h4').textContent;
+        document.getElementById('sumStaff').textContent = stf.closest('.bk-staff').querySelector('h4').textContent;
     }
     if (date) {
-        var d = new Date(date + 'T00:00:00');
-        document.getElementById('summaryDate').textContent = d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric', year:'numeric'});
+        var d = new Date(date+'T00:00:00');
+        document.getElementById('sumDate').textContent = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
     }
     if (time) {
-        var parts = time.split(':');
-        var h = parseInt(parts[0]);
-        var m = parts[1];
-        var ampm = h >= 12 ? 'PM' : 'AM';
-        document.getElementById('summaryTime').textContent = (h % 12 || 12) + ':' + m + ' ' + ampm;
+        var p = time.split(':');
+        var h = parseInt(p[0]);
+        document.getElementById('sumTime').textContent = (h%12||12)+':'+p[1]+' '+(h>=12?'PM':'AM');
     }
 }
 
-function updateTimeSlots() {
+function bkUpdateTimeSlots() {
     var date = document.querySelector('[name="appointment_date"]').value;
-    var timeSelect = document.getElementById('bookingTime');
+    var sel = document.getElementById('bookingTime');
     var today = new Date().toISOString().split('T')[0];
     var now = new Date();
-    var bufferMinutes = 30;
-
-    var options = timeSelect.querySelectorAll('option[value]');
-    options.forEach(function(opt) {
-        if (!opt.value) return;
-        if (date === today) {
-            var parts = opt.value.split(':');
-            var slotTime = new Date();
-            slotTime.setHours(parseInt(parts[0]), parseInt(parts[1]), 0, 0);
-            var minAllowed = new Date(now.getTime() + bufferMinutes * 60000);
-            if (slotTime <= minAllowed) {
-                opt.disabled = true;
-                opt.style.color = '#ccc';
-            } else {
-                opt.disabled = false;
-                opt.style.color = '';
-            }
-        } else {
-            opt.disabled = false;
-            opt.style.color = '';
-        }
+    sel.querySelectorAll('option[value]').forEach(function(o){
+        if(!o.value) return;
+        if(date===today){
+            var p=o.value.split(':');
+            var st=new Date();st.setHours(parseInt(p[0]),parseInt(p[1]),0,0);
+            var mn=new Date(now.getTime()+30*60000);
+            o.disabled=st<=mn; o.style.color=st<=mn?'#ccc':'';
+        } else { o.disabled=false; o.style.color=''; }
     });
-
-    if (date === today) {
-        var currentVal = timeSelect.value;
-        if (currentVal) {
-            var parts = currentVal.split(':');
-            var slotTime = new Date();
-            slotTime.setHours(parseInt(parts[0]), parseInt(parts[1]), 0, 0);
-            var minAllowed = new Date(now.getTime() + bufferMinutes * 60000);
-            if (slotTime <= minAllowed) {
-                timeSelect.value = '';
-            }
-        }
+    if(date===today && sel.value){
+        var p=sel.value.split(':');var st=new Date();st.setHours(parseInt(p[0]),parseInt(p[1]),0,0);
+        if(st<=new Date(now.getTime()+30*60000)) sel.value='';
     }
 }
 
-function onScheduleChange() {
-    updateTimeSlots();
+function bkOnSchedule() {
+    bkUpdateTimeSlots();
     var date = document.querySelector('[name="appointment_date"]').value;
     var time = document.querySelector('[name="appointment_time"]').value;
     var svc = document.querySelector('input[name="service_id"]:checked');
     var stf = document.querySelector('input[name="staff_id"]:checked');
-
-    var notice = document.getElementById('availabilityNotice');
-    if (!date || !time || !svc) { notice.style.display = 'none'; return; }
-
-    var duration = parseInt(svc.dataset.duration) || 30;
-    var staffId = stf ? stf.value : '';
-    var url = 'booking.php?check_availability=1&date=' + date + '&time=' + time + '&duration=' + duration + '&staff_id=' + staffId;
-
-    fetch(url).then(function(r){return r.json();}).then(function(data) {
-        notice.style.display = 'flex';
-        var seatsAvail = data.seats_available;
-        var seatsTotal = data.seats_total;
-
-        if (seatsAvail <= 0) {
-            notice.className = 'availability-notice avail-bad';
-            notice.innerHTML = '<i class="fas fa-times-circle"></i><span><strong>No seats available</strong> &mdash; All ' + seatsTotal + ' seats are occupied for this time slot.</span>';
-        } else if (seatsAvail <= 2) {
-            notice.className = 'availability-notice avail-warn';
-            notice.innerHTML = '<i class="fas fa-exclamation-triangle"></i><span><strong>' + seatsAvail + ' seat' + (seatsAvail > 1 ? 's' : '') + ' left</strong> &mdash; Limited availability. Book soon!</span>';
-        } else {
-            notice.className = 'availability-notice avail-ok';
-            notice.innerHTML = '<i class="fas fa-check-circle"></i><span><strong>' + seatsAvail + ' seats available</strong> &mdash; Good to go for ' + data.end_time + '.</span>';
-        }
-
-        if (!data.staff_available && staffId) {
-            notice.innerHTML += '<br><small style="color:#b45309;">This staff member may not be available during this time.</small>';
-        }
-    }).catch(function(){ notice.style.display = 'none'; });
+    var notice = document.getElementById('availNotice');
+    if (!date||!time||!svc) { notice.style.display='none'; return; }
+    var dur = parseInt(svc.dataset.duration)||30;
+    var sid = stf?stf.value:'';
+    fetch('booking.php?check_availability=1&date='+date+'&time='+time+'&duration='+dur+'&staff_id='+sid)
+    .then(function(r){return r.json();}).then(function(data){
+        notice.style.display='flex';
+        var sa=data.seats_available, st=data.seats_total;
+        if(sa<=0){notice.className='bk-avail bk-avail-bad';notice.innerHTML='<i class="fas fa-times-circle"></i><span><strong>No seats available</strong> &mdash; All '+st+' seats are occupied for this time slot.</span>';}
+        else if(sa<=2){notice.className='bk-avail bk-avail-warn';notice.innerHTML='<i class="fas fa-exclamation-triangle"></i><span><strong>'+sa+' seat'+(sa>1?'s':'')+' left</strong> &mdash; Limited availability. Book soon!</span>';}
+        else{notice.className='bk-avail bk-avail-ok';notice.innerHTML='<i class="fas fa-check-circle"></i><span><strong>'+sa+' seats available</strong> &mdash; Good to go until '+data.end_time+'.</span>';}
+        if(!data.staff_available&&sid) notice.innerHTML+='<br><small style="color:#b45309;">This staff member may not be available during this time.</small>';
+    }).catch(function(){notice.style.display='none';});
 }
 </script>
 

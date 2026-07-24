@@ -266,7 +266,6 @@ require_once '../includes/header.php';
         </table>
     </div>
 </div>
-<<<<<<< HEAD
 <script>
 document.querySelectorAll('.status-select').forEach(function(sel) {
     sel.addEventListener('change', function(e) {
@@ -430,8 +429,6 @@ function escapeHtml(str) {
 fetchUpcoming();
 setInterval(fetchUpcoming, 60000);
 </script>
-<?php require_once '../includes/footer.php'; ?>
-=======
 <?php if ($swal_error): ?>
 <script>
 Swal.fire({
@@ -443,4 +440,3 @@ Swal.fire({
 </script>
 <?php endif; ?>
 <?php require_once '../includes/footer.php'; ?>
->>>>>>> 86fe5cd91b098bac9679512c3d19e52dbe3943d5

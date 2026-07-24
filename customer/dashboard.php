@@ -60,7 +60,7 @@ require_once '../includes/header.php';
         <div class="hero-image">
             <div class="model-frame" style="overflow:hidden;">
                 <span class="model-text">✦ Welcome</span>
-                <img src="/nail_salon/assets/uploads/services/home.jpg" alt="Nail Salon" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">
+                <img src="/nail/assets/uploads/services/home.jpg" alt="Nail Salon" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">
             </div>
             <div class="floating-card">
                 <i class="fas fa-star"></i>
@@ -137,6 +137,31 @@ require_once '../includes/header.php';
 </section>
 <?php endif; ?>
 
+<style>
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem}
+.svc-card{background:white;border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(61,79,42,.06);border:1px solid rgba(124,179,66,.08);transition:all .4s ease;cursor:pointer;position:relative}
+.svc-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(61,79,42,.12);border-color:var(--avocado-300)}
+.svc-card-img{position:relative;height:200px;overflow:hidden}
+.svc-card-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.svc-card:hover .svc-card-img img{transform:scale(1.08)}
+.svc-card-img .svc-placeholder{width:100%;height:100%;background:linear-gradient(135deg,var(--avocado-100),var(--avocado-50));display:flex;align-items:center;justify-content:center}
+.svc-card-img .svc-placeholder i{font-size:3rem;color:var(--avocado-300)}
+.svc-card-badge{position:absolute;top:.75rem;left:.75rem;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);color:var(--avocado-700);font-size:.7rem;font-weight:600;padding:.3rem .8rem;border-radius:50px;border:1px solid var(--avocado-200)}
+.svc-card-price-tag{position:absolute;top:.75rem;right:.75rem;background:var(--avocado-600);color:white;font-size:.85rem;font-weight:700;padding:.35rem .9rem;border-radius:12px;box-shadow:0 4px 12px rgba(93,132,51,.3)}
+.svc-card-body{padding:1.2rem 1.4rem 1.4rem}
+.svc-card-body h3{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--avocado-900);margin:0 0 .3rem;line-height:1.3}
+.svc-card-body .svc-desc{font-size:.85rem;color:var(--text-light);line-height:1.6;margin:0 0 1rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.svc-card-meta{display:flex;align-items:center;gap:1rem;padding-top:.9rem;border-top:1px solid #f3f4f6}
+.svc-card-meta .svc-meta-item{display:flex;align-items:center;gap:.35rem;font-size:.8rem;color:var(--text-light)}
+.svc-card-meta .svc-meta-item i{color:var(--avocado-500);font-size:.85rem}
+.svc-card-footer{display:flex;align-items:center;justify-content:space-between;padding:0 1.4rem 1.2rem}
+.svc-card-footer .svc-book-btn{background:linear-gradient(135deg,var(--avocado-500),var(--avocado-600));color:white;border:none;padding:.55rem 1.2rem;border-radius:12px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none}
+.svc-card-footer .svc-book-btn:hover{background:linear-gradient(135deg,var(--avocado-600),var(--avocado-700));transform:translateY(-2px);box-shadow:0 6px 16px rgba(93,132,51,.25)}
+.svc-card-footer .svc-view-detail{font-size:.78rem;color:var(--avocado-600);font-weight:600;text-decoration:none;display:flex;align-items:center;gap:.3rem;transition:color .2s;cursor:pointer}
+.svc-card-footer .svc-view-detail:hover{color:var(--avocado-800)}
+@media(max-width:640px){.svc-grid{grid-template-columns:1fr}}
+</style>
+
 <section class="section" id="services">
     <div class="container">
         <div class="section-header">
@@ -144,17 +169,31 @@ require_once '../includes/header.php';
             <h2>Fresh <span>Avocado</span> Treatments</h2>
             <p>From classic elegance to bold model-inspired designs — every service is crafted with care using natural, high-quality products.</p>
         </div>
-        <div class="services-grid">
+        <div class="svc-grid">
             <?php foreach ($services as $svc): ?>
-            <a href="booking.php?service=<?php echo $svc['id']; ?>" class="service-card" style="text-decoration:none;display:block;">
-                <div class="icon"><i class="fas fa-hand-sparkles"></i></div>
-                <h3><?php echo htmlspecialchars($svc['name']); ?></h3>
-                <p><?php echo htmlspecialchars($svc['description'] ?? ''); ?></p>
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--avocado-100);">
-                    <span style="font-weight:700;color:var(--avocado-600);font-size:1.1rem;">MMK<?php echo number_format($svc['price'], 2); ?></span>
-                    <span style="font-size:0.8rem;color:var(--text-light);"><?php echo $svc['duration']; ?> min</span>
+            <div class="svc-card">
+                <div class="svc-card-img">
+                    <?php if ($svc['image']): ?>
+                        <img src="/nail/assets/uploads/<?php echo $svc['image']; ?>" alt="<?php echo htmlspecialchars($svc['name']); ?>">
+                    <?php else: ?>
+                        <div class="svc-placeholder"><i class="fas fa-leaf"></i></div>
+                    <?php endif; ?>
+                    <span class="svc-card-badge"><?php echo htmlspecialchars($svc['category_name']); ?></span>
+                    <span class="svc-card-price-tag">MMK<?php echo number_format($svc['price'], 2); ?></span>
                 </div>
-            </a>
+                <div class="svc-card-body">
+                    <h3><?php echo htmlspecialchars($svc['name']); ?></h3>
+                    <p class="svc-desc"><?php echo htmlspecialchars($svc['description'] ?? ''); ?></p>
+                    <div class="svc-card-meta">
+                        <span class="svc-meta-item"><i class="fas fa-clock"></i> <?php echo $svc['duration']; ?> min</span>
+                        <span class="svc-meta-item"><i class="fas fa-tag"></i> <?php echo htmlspecialchars($svc['category_name']); ?></span>
+                    </div>
+                </div>
+                <div class="svc-card-footer">
+                    <span class="svc-view-detail">Details <i class="fas fa-arrow-right"></i></span>
+                    <a href="booking.php?service=<?php echo $svc['id']; ?>" class="svc-book-btn" onclick="event.stopPropagation()"><i class="fas fa-calendar-plus"></i> Book</a>
+                </div>
+            </div>
             <?php endforeach; ?>
         </div>
     </div>
@@ -173,7 +212,7 @@ require_once '../includes/header.php';
             <div class="staff-card">
                 <div class="staff-photo">
                     <?php if ($s['photo']): ?>
-                    <img src="/nail_salon/assets/uploads/<?php echo htmlspecialchars($s['photo']); ?>" alt="<?php echo htmlspecialchars($s['name']); ?>">
+                    <img src="/nail/assets/uploads/<?php echo htmlspecialchars($s['photo']); ?>" alt="<?php echo htmlspecialchars($s['name']); ?>">
                     <?php else: ?>
                     <i class="fas fa-user-circle"></i>
                     <?php endif; ?>
@@ -193,7 +232,7 @@ require_once '../includes/header.php';
         <div class="about-grid">
             <div class="about-image">
                 <div class="model-frame-2" style="overflow:hidden;">
-                    <img src="/nail_salon/assets/uploads/services/decor.jpg" alt="Salon Interior" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">
+                    <img src="/nail/assets/uploads/services/decor.jpg" alt="Salon Interior" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">
                 </div>
                 <div class="experience-badge">
                     <h3>5+</h3>
@@ -213,80 +252,6 @@ require_once '../includes/header.php';
                     <div class="about-feature"><i class="fas fa-check-circle"></i><span>Hygienic & Sterile</span></div>
                     <div class="about-feature"><i class="fas fa-check-circle"></i><span>Fashion-Forward Designs</span></div>
                 </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Contact -->
-<section class="section" id="contact" style="background:white;">
-    <div class="container">
-        <div class="section-header">
-            <span class="tag">Get in Touch</span>
-            <h2><span>Contact</span> Us</h2>
-            <p>We'd love to hear from you. Reach out for bookings, inquiries, or just to say hello.</p>
-        </div>
-        <div class="contact-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;max-width:1000px;margin:0 auto;">
-            <div>
-                <div style="display:flex;flex-direction:column;gap:1.5rem;">
-                    <div style="display:flex;align-items:flex-start;gap:1rem;">
-                        <div style="width:50px;height:50px;background:var(--avocado-50);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <i class="fas fa-map-marker-alt" style="color:var(--avocado-600);font-size:1.2rem;"></i>
-                        </div>
-                        <div>
-                            <h4 style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--avocado-900);margin:0 0 0.3rem;">Visit Us</h4>
-                            <p style="color:var(--text-light);font-size:0.9rem;line-height:1.6;margin:0;">123 Avocado Lane, Quezon City<br>Metro Manila, Philippines</p>
-                        </div>
-                    </div>
-                    <div style="display:flex;align-items:flex-start;gap:1rem;">
-                        <div style="width:50px;height:50px;background:var(--avocado-50);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <i class="fas fa-phone-alt" style="color:var(--avocado-600);font-size:1.2rem;"></i>
-                        </div>
-                        <div>
-                            <h4 style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--avocado-900);margin:0 0 0.3rem;">Call Us</h4>
-                            <p style="color:var(--text-light);font-size:0.9rem;line-height:1.6;margin:0;">+63 912 345 6789<br>+63 998 765 4321</p>
-                        </div>
-                    </div>
-                    <div style="display:flex;align-items:flex-start;gap:1rem;">
-                        <div style="width:50px;height:50px;background:var(--avocado-50);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <i class="fas fa-envelope" style="color:var(--avocado-600);font-size:1.2rem;"></i>
-                        </div>
-                        <div>
-                            <h4 style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--avocado-900);margin:0 0 0.3rem;">Email Us</h4>
-                            <p style="color:var(--text-light);font-size:0.9rem;line-height:1.6;margin:0;">hello@avocadonail.com<br>bookings@avocadonail.com</p>
-                        </div>
-                    </div>
-                    <div style="display:flex;align-items:flex-start;gap:1rem;">
-                        <div style="width:50px;height:50px;background:var(--avocado-50);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <i class="fas fa-clock" style="color:var(--avocado-600);font-size:1.2rem;"></i>
-                        </div>
-                        <div>
-                            <h4 style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--avocado-900);margin:0 0 0.3rem;">Opening Hours</h4>
-                            <p style="color:var(--text-light);font-size:0.9rem;line-height:1.6;margin:0;">Monday — Saturday: 9:00 AM — 7:00 PM<br>Sunday: 10:00 AM — 5:00 PM</p>
-                        </div>
-                    </div>
-                </div>
-                <div style="display:flex;gap:0.8rem;margin-top:2rem;padding-top:2rem;border-top:1px solid var(--avocado-100);">
-                    <a href="#" style="width:44px;height:44px;border-radius:50%;background:var(--avocado-50);display:flex;align-items:center;justify-content:center;color:var(--avocado-600);transition:all 0.3s;text-decoration:none;" onmouseover="this.style.background='var(--avocado-600)';this.style.color='white';" onmouseout="this.style.background='var(--avocado-50)';this.style.color='var(--avocado-600)';"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" style="width:44px;height:44px;border-radius:50%;background:var(--avocado-50);display:flex;align-items:center;justify-content:center;color:var(--avocado-600);transition:all 0.3s;text-decoration:none;" onmouseover="this.style.background='var(--avocado-600)';this.style.color='white';" onmouseout="this.style.background='var(--avocado-50)';this.style.color='var(--avocado-600)';"><i class="fab fa-instagram"></i></a>
-                    <a href="#" style="width:44px;height:44px;border-radius:50%;background:var(--avocado-50);display:flex;align-items:center;justify-content:center;color:var(--avocado-600);transition:all 0.3s;text-decoration:none;" onmouseover="this.style.background='var(--avocado-600)';this.style.color='white';" onmouseout="this.style.background='var(--avocado-50)';this.style.color='var(--avocado-600)';"><i class="fab fa-tiktok"></i></a>
-                    <a href="#" style="width:44px;height:44px;border-radius:50%;background:var(--avocado-50);display:flex;align-items:center;justify-content:center;color:var(--avocado-600);transition:all 0.3s;text-decoration:none;" onmouseover="this.style.background='var(--avocado-600)';this.style.color='white';" onmouseout="this.style.background='var(--avocado-50)';this.style.color='var(--avocado-600)';"><i class="fab fa-pinterest-p"></i></a>
-                </div>
-            </div>
-            <div style="background:var(--avocado-50);border-radius:20px;padding:2.5rem;">
-                <h3 style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--avocado-900);margin:0 0 0.5rem;">Send a Message</h3>
-                <p style="color:var(--text-light);font-size:0.9rem;margin:0 0 1.5rem;">We'll get back to you within 24 hours.</p>
-                <form method="POST" action="" style="display:flex;flex-direction:column;gap:1rem;">
-                    <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-                        <input type="text" placeholder="Your Name" required style="width:100%;padding:0.9rem 1rem;border:2px solid transparent;border-radius:12px;font-size:0.9rem;background:white;outline:none;transition:all 0.3s;" onfocus="this.style.borderColor='var(--avocado-400)';" onblur="this.style.borderColor='transparent';">
-                        <input type="email" placeholder="Your Email" required style="width:100%;padding:0.9rem 1rem;border:2px solid transparent;border-radius:12px;font-size:0.9rem;background:white;outline:none;transition:all 0.3s;" onfocus="this.style.borderColor='var(--avocado-400)';" onblur="this.style.borderColor='transparent';">
-                    </div>
-                    <input type="text" placeholder="Subject" style="width:100%;padding:0.9rem 1rem;border:2px solid transparent;border-radius:12px;font-size:0.9rem;background:white;outline:none;transition:all 0.3s;" onfocus="this.style.borderColor='var(--avocado-400)';" onblur="this.style.borderColor='transparent';">
-                    <textarea rows="4" placeholder="Your Message" required style="width:100%;padding:0.9rem 1rem;border:2px solid transparent;border-radius:12px;font-size:0.9rem;background:white;outline:none;resize:vertical;transition:all 0.3s;" onfocus="this.style.borderColor='var(--avocado-400)';" onblur="this.style.borderColor='transparent';"></textarea>
-                    <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:1rem;">
-                        <i class="fas fa-paper-plane"></i> Send Message
-                    </button>
-                </form>
             </div>
         </div>
     </div>

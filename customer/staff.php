@@ -19,7 +19,7 @@ require_once '../includes/header.php';
             <div class="p-6 text-center">
                 <div class="w-24 h-24 rounded-full mx-auto overflow-hidden bg-gray-100 mb-4">
                     <?php if ($staff['photo']): ?>
-                        <img src="/nail_salon/assets/uploads/<?php echo $staff['photo']; ?>" alt="" class="w-full h-full object-cover">
+                        <img src="/nail/assets/uploads/<?php echo $staff['photo']; ?>" alt="" class="w-full h-full object-cover">
                     <?php else: ?>
                         <div class="w-full h-full flex items-center justify-center text-gray-400 text-4xl">
                             <i class="fas fa-user"></i>

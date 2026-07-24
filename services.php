@@ -21,7 +21,7 @@ if ($selected_category) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Services — Avocado Nail & Model Studio</title>
     <meta name="description" content="Browse our full range of premium nail services. From classic manicures to model-inspired nail art.">
-    <link rel="stylesheet" href="/nail_salon/assets/css/style.css">
+    <link rel="stylesheet" href="/nail/assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -30,19 +30,19 @@ if ($selected_category) {
 
 <nav class="navbar" id="navbar">
     <div class="container">
-        <a href="/nail_salon/index.php" class="logo">
+        <a href="/nail/index.php" class="logo">
             <i class="fas fa-leaf"></i> Avocado Nail
         </a>
         <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
             <i class="fas fa-bars"></i>
         </button>
         <ul class="nav-links" id="navLinks">
-            <li><a href="/nail_salon/index.php">Home</a></li>
-            <li><a href="/nail_salon/services.php" class="active">Services</a></li>
-            <li><a href="/nail_salon/index.php#about">About</a></li>
-            <li><a href="/nail_salon/index.php#contact">Contact</a></li>
-            <li><a href="/nail_salon/auth/login.php">Sign In</a></li>
-            <li><a href="/nail_salon/auth/register.php" class="btn-nav">Get Started</a></li>
+            <li><a href="/nail/index.php">Home</a></li>
+            <li><a href="/nail/services.php" class="active">Services</a></li>
+            <li><a href="/nail/index.php#about">About</a></li>
+            <li><a href="/nail/index.php#contact">Contact</a></li>
+            <li><a href="/nail/auth/login.php">Sign In</a></li>
+            <li><a href="/nail/auth/register.php" class="btn-nav">Get Started</a></li>
         </ul>
     </div>
 </nav>
@@ -73,7 +73,7 @@ if ($selected_category) {
             <?php foreach ($services as $svc): ?>
             <div class="bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition group">
                 <?php if ($svc['image']): ?>
-                    <img src="/nail_salon/assets/uploads/<?php echo $svc['image']; ?>" alt="" class="w-full h-48 object-cover group-hover:scale-105 transition duration-300">
+                    <img src="/nail/assets/uploads/<?php echo $svc['image']; ?>" alt="" class="w-full h-48 object-cover group-hover:scale-105 transition duration-300">
                 <?php else: ?>
                     <div class="w-full h-48 bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center">
                         <i class="fas fa-leaf text-emerald-300 text-5xl"></i>
@@ -119,17 +119,17 @@ if ($selected_category) {
             <div class="footer-col">
                 <h4>Quick Links</h4>
                 <ul>
-                    <li><a href="/nail_salon/index.php">Home</a></li>
-                    <li><a href="/nail_salon/services.php">Services</a></li>
-                    <li><a href="/nail_salon/index.php#about">About</a></li>
-                    <li><a href="/nail_salon/index.php#contact">Contact</a></li>
+                    <li><a href="/nail/index.php">Home</a></li>
+                    <li><a href="/nail/services.php">Services</a></li>
+                    <li><a href="/nail/index.php#about">About</a></li>
+                    <li><a href="/nail/index.php#contact">Contact</a></li>
                 </ul>
             </div>
             <div class="footer-col">
                 <h4>Account</h4>
                 <ul>
-                    <li><a href="/nail_salon/auth/login.php">Sign In</a></li>
-                    <li><a href="/nail_salon/auth/register.php">Create Account</a></li>
+                    <li><a href="/nail/auth/login.php">Sign In</a></li>
+                    <li><a href="/nail/auth/register.php">Create Account</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -158,7 +158,7 @@ const isLoggedIn = <?php echo isLoggedIn() ? 'true' : 'false'; ?>;
 
 function handleBook() {
     if (isLoggedIn) {
-        window.location.href = '/nail_salon/customer/booking.php';
+        window.location.href = '/nail/customer/booking.php';
     } else {
         Swal.fire({
             icon: 'info',
@@ -172,7 +172,7 @@ function handleBook() {
             showClass: { popup: 'animate__animated animate__fadeInUp' }
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = '/nail_salon/auth/login.php';
+                window.location.href = '/nail/auth/login.php';
             }
         });
     }

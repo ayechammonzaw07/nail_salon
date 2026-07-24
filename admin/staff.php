@@ -93,7 +93,7 @@ require_once '../includes/header.php';
                 <div class="flex items-center space-x-4">
                     <div class="w-16 h-16 rounded-full overflow-hidden bg-gray-100">
                         <?php if ($staff['photo']): ?>
-                            <img src="/nail_salon/assets/uploads/<?php echo $staff['photo']; ?>" alt="" class="w-full h-full object-cover">
+                            <img src="/nail/assets/uploads/<?php echo $staff['photo']; ?>" alt="" class="w-full h-full object-cover">
                         <?php else: ?>
                             <div class="w-full h-full flex items-center justify-center text-gray-400 text-2xl"><i class="fas fa-user"></i></div>
                         <?php endif; ?>
